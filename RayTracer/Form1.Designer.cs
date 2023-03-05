@@ -96,6 +96,7 @@
             this.loadSceneBtn.TabIndex = 0;
             this.loadSceneBtn.Text = "Load File";
             this.loadSceneBtn.UseVisualStyleBackColor = true;
+            this.loadSceneBtn.Click += new System.EventHandler(this.loadSceneBtn_Click);
             // 
             // imageCtrlsBox
             // 
