@@ -53,7 +53,10 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\Color3.cs" />
+    <Compile Include="Model\Hit.cs" />
     <Compile Include="Model\Image.cs" />
+    <Compile Include="Model\Material.cs" />
+    <Compile Include="Model\Ray.cs" />
     <Compile Include="Model\Vector3.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
