@@ -33,6 +33,13 @@ namespace RayTracer.Model
             ZValue = z;
         }
 
+        public Vector3(Vector3 vector3)
+        {
+            XValue = vector3.XValue;
+            YValue = vector3.YValue;
+            ZValue = vector3.ZValue;
+        }
+
         /// <summary>
         /// Método para verificar se dois Vetores são iguais.
         /// </summary>
