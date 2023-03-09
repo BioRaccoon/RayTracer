@@ -20,16 +20,11 @@ namespace RayTracer.Model
         /// A direção do raio de luz.
         /// </summary>
         public Vector3 Direction { get; set; }
-        /// <summary>
-        /// A distância total do raio de luz à superfície alvo.
-        /// </summary>
-        //public int TotalDistance { get; set; }
 
-        public Ray(Vector3 Origin, Vector3 Direction/*, int TotalDistance*/)
+        public Ray(Vector3 Origin, Vector3 Direction)
         {
             this.Origin = Origin;
             this.Direction = Direction;
-            //this.TotalDistance = TotalDistance; //TODO: Não sei se isto é um parâmetro, mas é melhor perguntar
         }
 
         public Vector3 getPointInLine(double totalDistance)

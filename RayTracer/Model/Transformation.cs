@@ -8,5 +8,11 @@ namespace RayTracer.Model
 {
     internal class Transformation
     {
+        double[,] TransformationMatrix = new double[4, 4];
+
+        public Transformation(double[,] transformationMatrix)
+        {
+            TransformationMatrix = transformationMatrix;
+        }
     }
 }

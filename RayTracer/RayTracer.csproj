@@ -61,6 +61,7 @@
     <Compile Include="Model\Ray.cs" />
     <Compile Include="Model\Transformation.cs" />
     <Compile Include="Model\Vector3.cs" />
+    <Compile Include="Model\Vector4.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\Parser.cs" />

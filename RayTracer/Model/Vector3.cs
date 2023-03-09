@@ -115,7 +115,7 @@ namespace RayTracer.Model
         }
         /// <summary>
         /// Função que retorna o produto de vetores que resulta numa normal (pseudo-vectorial) entre dois vetores.
-        /// TODO: PERGUNTAR AO STOR COMO SE DESCOBRE A DIREÇÃO CERTA DO VETOR A PARTIR DO CÓDIGO QUE TEMOS.
+        /// Componentes negativas ou positivas indicam a direção do vetor de acordo com a regra da mão direita.
         /// </summary>
         /// <param name="anotherVector">O outro vetor para calcular o produto.</param>
         /// <returns>A normal (pseudo-vetorial) entre dois vetores.</returns>
@@ -126,6 +126,16 @@ namespace RayTracer.Model
                 (ZValue * anotherVector.XValue - XValue * anotherVector.ZValue),
                 (XValue * anotherVector.YValue - YValue * anotherVector.XValue)
             );
+        }
+
+        public Vector4 ConvertVectorToHomogenous()
+        {
+            return new Vector4(XValue,YValue,ZValue, 0.0);
+        }
+
+        public Vector4 ConvertPointToHomogenous()
+        {
+            return new Vector4(XValue, YValue, ZValue, 1.0);
         }
     }
 }
