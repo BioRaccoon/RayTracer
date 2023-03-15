@@ -1,4 +1,5 @@
-﻿using RayTracer.Model;
+﻿using RayTracer.Controllers;
+using RayTracer.Model;
 using RayTracer.Utils;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace RayTracer
     {
 
         Parser parser;
+        VectorOperationsController vectorOperationsController;
 
         Image image;
         Camera camera;
@@ -31,6 +33,38 @@ namespace RayTracer
         {
             readFile();
             fillFormFields();
+            calculateTrianglesNormalVectors();
+        }
+
+        public void calculateTrianglesNormalVectors()
+        {
+            vectorOperationsController = new VectorOperationsController();
+
+            Console.WriteLine("############################################### Calculanting Normals ###############################################");
+
+            int loop = 1;
+            foreach (List<Triangle> solidTriangles in triangles)
+            {
+                Console.WriteLine(loop + "º solid has " + solidTriangles.Count + " triangles");
+                Console.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                vectorOperationsController.CalcNormals(solidTriangles);
+                foreach (Triangle triangle in solidTriangles)
+                {
+                    Console.WriteLine("---------------------------------------------------------");
+                    Console.WriteLine("Triangle: \n" +
+                        "Transformation Index: " + triangle.TransformationIndex + "\n" +
+                        "Material Index: " + triangle.MaterialIndex + "\n" +
+                        "First Vertex: " + "x: " + triangle.FirstVertex.XValue + " y: " + triangle.FirstVertex.YValue + " z: " + triangle.FirstVertex.ZValue + "\n" +
+                        "Second Vertex: " + "x: " + triangle.SecondVertex.XValue + " y: " + triangle.SecondVertex.YValue + " z: " + triangle.SecondVertex.ZValue + "\n" +
+                        "Third Vertex: " + "x: " + triangle.ThirdVertex.XValue + " y: " + triangle.ThirdVertex.YValue + " z: " + triangle.ThirdVertex.ZValue + "\n" +
+                        "Normal: " + "x: " + triangle.Normal.XValue + " y: " + triangle.Normal.YValue + " z: " + triangle.Normal.ZValue + " Length: " + triangle.Normal.Length());
+
+                    Console.WriteLine("---------------------------------------------------------");
+                }
+                Console.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                loop++;
+            }
+
         }
 
         public void readFile()

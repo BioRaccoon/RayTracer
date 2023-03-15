@@ -273,7 +273,7 @@ namespace RayTracer.Utils
             foreach (List<Triangle> solid in trianglesList)
             {
                 Console.WriteLine(loop + "º solid has " + solid.Count + " triangles");
-                /*Console.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                Console.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 foreach (Triangle triangle in solid)
                 {
                     Console.WriteLine("---------------------------------------------------------");
@@ -285,7 +285,7 @@ namespace RayTracer.Utils
                         "Third Vertex: " + "x: " + triangle.ThirdVertex.XValue + " y: " + triangle.ThirdVertex.YValue + " z: " + triangle.ThirdVertex.ZValue);
                     Console.WriteLine("---------------------------------------------------------");
                 }
-                Console.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");*/
+                Console.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 loop++;
             }
             Console.WriteLine("#######################################");
