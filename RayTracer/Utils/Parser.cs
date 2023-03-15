@@ -52,8 +52,9 @@ namespace RayTracer.Utils
 
         public List<Box> getBoxes() {  return boxesList; }
 
-        public void readTracerFile(string filename)
+        public bool readTracerFile(string filename)
         {
+            if (filename == string.Empty) return false;
             string fileContent = File.ReadAllText(filename);
 
             Regex regex = new Regex(@"[a-zA-Z]+\s\n{\s\n[\sa-zA-z0-9\.-]*}");
@@ -84,7 +85,7 @@ namespace RayTracer.Utils
             segmentsConverter();
 
             printAllLists();
-
+            return true;
         }
 
         public void segmentsConverter()

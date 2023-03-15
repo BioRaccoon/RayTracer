@@ -31,9 +31,12 @@ namespace RayTracer
 
         private void loadSceneBtn_Click(object sender, EventArgs e)
         {
-            readFile();
-            fillFormFields();
-            calculateTrianglesNormalVectors();
+            bool success = readFile();
+            if (success) {
+                fillFormFields();
+                calculateTrianglesNormalVectors();
+            }
+            
         }
 
         public void calculateTrianglesNormalVectors()
@@ -67,7 +70,7 @@ namespace RayTracer
 
         }
 
-        public void readFile()
+        public bool readFile()
         {
             var filePath = string.Empty;
 
@@ -83,7 +86,7 @@ namespace RayTracer
             }
 
             parser = new Parser();
-            parser.readTracerFile(filePath);
+            return parser.readTracerFile(filePath);
         }
 
         public void fillFormFields()
