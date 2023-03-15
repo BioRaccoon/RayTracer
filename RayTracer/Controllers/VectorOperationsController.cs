@@ -10,12 +10,10 @@ namespace RayTracer.Controllers
 {
     internal class VectorOperationsController
     {
-
         public VectorOperationsController() { }
 
-        public void CalcNormals()
+        public void CalcNormals(List<Triangle> triangles)
         {
-            List<Triangle> triangles = new List<Triangle>();
             foreach (Triangle triangle in triangles)
             {
                Vector3 edgeAB = new Vector3(triangle.SecondVertex.Subtract(triangle.FirstVertex));

@@ -11,7 +11,6 @@ namespace RayTracer.Model
         public int TransformationIndex { get; set; }
         public double Distance { get; set; }
         public double FieldOfView { get; set; }
-
         public Camera(int cameraTransformationIndex, double cameraDistance, double fov)
         {
             TransformationIndex = cameraTransformationIndex;

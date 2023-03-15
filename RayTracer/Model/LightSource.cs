@@ -10,7 +10,6 @@ namespace RayTracer.Model
     {
         public int TransformationIndex { get; set; }
         public Color3 Intensity { get; set; }
-
         public LightSource(int LightTransformationIndex, Color3 lightIntensity)
         {
             TransformationIndex = LightTransformationIndex;

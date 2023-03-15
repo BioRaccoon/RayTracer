@@ -1,4 +1,6 @@
-﻿using System;
+﻿using RayTracer.Model;
+using System;
+using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
@@ -12,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace RayTracer.Utils
 {
-    public class Parser
+    internal class Parser
     {
 
         List<String> images = new List<String>();
@@ -23,6 +25,32 @@ namespace RayTracer.Utils
         List<String> triangles = new List<String>();
         List<String> spheres = new List<String>();
         List<String> boxes = new List<String>();
+
+        Image image;
+        Camera camera;
+        List<Transformation> transformationsList = new List<Transformation>();
+        List<LightSource> lightsList = new List<LightSource>();
+        List<Material> materialsList = new List<Material>();
+        List<Triangle> allTriangles = new List<Triangle>();
+        List<List<Triangle>> trianglesList = new List<List<Triangle>>();
+        List<Sphere> spheresList = new List<Sphere>();
+        List<Box> boxesList = new List<Box>();
+
+        public Image getImage() { return image; }
+
+        public Camera getCamera() { return camera; }
+
+        public List<Transformation> getTransformations() {  return transformationsList; }
+
+        public List <LightSource> getLights() {  return lightsList; }
+
+        public List<Material> getMaterials() {  return materialsList; }
+
+        public List<List<Triangle>> getTriangles() { return trianglesList; }
+
+        public List<Sphere> getSphere() {  return spheresList; }
+
+        public List<Box> getBoxes() {  return boxesList; }
 
         public void readTracerFile(string filename)
         {
@@ -49,33 +77,90 @@ namespace RayTracer.Utils
             cameras = removeBracketsfromList(cameras);
             lights = removeBracketsfromList(lights);
             materials = removeBracketsfromList(materials);
-            triangles =removeBracketsfromList(triangles);
+            triangles = removeBracketsfromList(triangles);
             spheres = removeBracketsfromList(spheres);
             boxes = removeBracketsfromList(boxes);
 
-            lol();
+            segmentsConverter();
 
-            /* switch ()
-             {
-                 case "Image":
-                     break;
-                 case "Transformation":
-                     break;
-                 case "Camera":
-                     break;
-                 case "Light":
-                     break;
-                 case "Material":
-                     break;
-                 case "Triangles":
-                     break;
-                 case "Sphere":
-                     break;
-                 case "Box":
-                     break;
-                 default:
-                     break;*/
+            printAllLists();
 
+        }
+
+        public void segmentsConverter()
+        {
+            foreach (string imageString in images)
+            {
+                string[] imageTemp = imageString.Split('\n');
+                string[] widthHeight = imageTemp[0].Split(' ');
+                string[] stringImageColor3 = imageTemp[1].Split(' ');
+                image = new Image(int.Parse(widthHeight[0]), int.Parse(widthHeight[1]), 
+                    new Color3(double.Parse(stringImageColor3[0]), double.Parse(stringImageColor3[1]), double.Parse(stringImageColor3[2])));
+            }
+            /*foreach (string transformationString in transformations)
+            {
+            }*/
+            foreach (string cameraString in cameras)
+            {
+                string[] cameraTemp = cameraString.Split('\n');
+                camera = new Camera(int.Parse(cameraTemp[0]), double.Parse(cameraTemp[1]), double.Parse(cameraTemp[2]));
+            }
+            foreach (string lightString in lights)
+            {
+                string[] lightTemp = lightString.Split('\n');
+                string[] stringLightColor3 = lightTemp[1].Split(' ');
+                LightSource light = new LightSource(int.Parse(lightTemp[0]), 
+                    new Color3(double.Parse(stringLightColor3[0]), double.Parse(stringLightColor3[1]), double.Parse(stringLightColor3[2])));
+                lightsList.Add(light);
+            }
+            foreach (string materialString in materials)
+            {
+                string[] materialTemp = materialString.Split('\n');
+                string[] stringMaterialColor3 = materialTemp[1].Split(' ');
+                string[] stringLightEffects = materialTemp[1].Split(' ');
+                Material material = new Material(
+                    new Color3(double.Parse(stringMaterialColor3[0]), double.Parse(stringMaterialColor3[1]), double.Parse(stringMaterialColor3[2])),
+                    double.Parse(stringLightEffects[0]), 
+                    double.Parse(stringLightEffects[1]), 
+                    double.Parse(stringLightEffects[2]), 
+                    double.Parse(stringLightEffects[3]), 
+                    double.Parse(stringLightEffects[4]));
+                materialsList.Add(material);
+            }
+            foreach (string triangleString in triangles)
+            {
+                List<Triangle> tempTriangleList = new List<Triangle>();
+                string[] triangleTemp = triangleString.Split('\n');
+                int transformationIndex = int.Parse(triangleTemp[0]);
+                triangleTemp = triangleTemp.Skip(1).ToArray();
+
+                for (int i = 0; i < triangleTemp.Length - 3; i++)
+                {
+                    string[] stringTriangleFirstVertex = triangleTemp[i+1].Split(' ');
+                    string[] stringTriangleSecondVertex = triangleTemp[i+2].Split(' ');
+                    string[] stringTriangleThirdVertex = triangleTemp[i+3].Split(' ');
+                    Triangle triangle = new Triangle(transformationIndex, int.Parse(triangleTemp[i]),
+                        new Vector3(double.Parse(stringTriangleFirstVertex[0]), double.Parse(stringTriangleFirstVertex[1]), double.Parse(stringTriangleFirstVertex[2])),
+                        new Vector3(double.Parse(stringTriangleSecondVertex[0]), double.Parse(stringTriangleSecondVertex[1]), double.Parse(stringTriangleSecondVertex[2])),
+                        new Vector3(double.Parse(stringTriangleThirdVertex[0]), double.Parse(stringTriangleThirdVertex[1]), double.Parse(stringTriangleThirdVertex[2])));
+                    allTriangles.Add(triangle);
+                    tempTriangleList.Add(triangle);
+                    i += 3;
+                }
+                trianglesList.Add(tempTriangleList);
+            }
+            foreach (string sphereString in spheres)
+            {
+                string[] sphereTemp = sphereString.Split('\n');
+                Sphere sphere = new Sphere(int.Parse(sphereTemp[0]), int.Parse(sphereTemp[1]));
+                spheresList.Add(sphere);
+            }
+            foreach (string boxString in boxes)
+            {
+                string[] boxTemp = boxString.Split('\n');
+                Box box = new Box(int.Parse(boxTemp[0]), int.Parse(boxTemp[1]));
+                boxesList.Add(box);
+            }
         }
 
         public List<String> removeBracketsfromList(List<String> list)
@@ -141,47 +226,85 @@ namespace RayTracer.Utils
             }
         }
 
-        public void lol() {
+        public void printAllLists() {
 
             Console.WriteLine("#######################################");
-            foreach (string image in images)
-            {
-                Console.WriteLine("Image: \n" + image);
-            }
-            Console.WriteLine("#######################################");
-            foreach (string transformation in transformations)
+            Console.WriteLine("---------------------------------------------------------");
+            Console.WriteLine("Image: \n" + 
+                "Dimensions: " + image.Width + "x" + image.Length + "\n" + 
+                "R: " + image.BackgroundColor.Red + " G: " + image.BackgroundColor.Green + " B: " + image.BackgroundColor.Blue);
+            Console.WriteLine("---------------------------------------------------------");
+            /*Console.WriteLine("#######################################");
+            foreach (Transformation transformation in transformationsList)
             {
                 Console.WriteLine("Transformation: \n" + transformation);
+            }*/
+            Console.WriteLine("#######################################");
+            Console.WriteLine("---------------------------------------------------------");
+            Console.WriteLine("Camera: \n" + 
+                "Transformation: " + camera.TransformationIndex + "\n" +
+                "Distance: " + camera.Distance + "\n" + 
+                "FOV: " + camera.FieldOfView);
+            Console.WriteLine("---------------------------------------------------------");
+            Console.WriteLine("#######################################");
+            foreach (LightSource light in lightsList)
+            {
+                Console.WriteLine("---------------------------------------------------------");
+                Console.WriteLine("Light: \n" +
+                    "Transformation: " + light.TransformationIndex + "\n" +
+                    "R: " + light.Intensity.Red + " G: " + light.Intensity.Green + " B: " + light.Intensity.Blue);
+                Console.WriteLine("---------------------------------------------------------");
             }
             Console.WriteLine("#######################################");
-            foreach (string camera in cameras)
+            foreach (Material material in materialsList)
             {
-                Console.WriteLine("Camera: \n" + camera);
+                Console.WriteLine("---------------------------------------------------------");
+                Console.WriteLine("Material: \n" +
+                    "R: " + material.Color.Red + " G: " + material.Color.Green + " B: " + material.Color.Blue + "\n" +
+                    "Ambient Light: " + material.AmbientLight + "\n" +
+                    "Difuse Light: " + material.DifuseLight + "\n" +
+                    "Specular Light: " + material.SpecularLight + "\n" +
+                    "Refraction: " + material.Refraction + "\n" +
+                    "Refraction Index: " + material.RefractionIndex);
+                Console.WriteLine("---------------------------------------------------------");
             }
             Console.WriteLine("#######################################");
-            foreach (string light in lights)
+            int loop = 1;
+            foreach (List<Triangle> solid in trianglesList)
             {
-                Console.WriteLine("Light: \n" + light);
+                Console.WriteLine(loop + "º solid has " + solid.Count + " triangles");
+                /*Console.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                foreach (Triangle triangle in solid)
+                {
+                    Console.WriteLine("---------------------------------------------------------");
+                    Console.WriteLine("Triangle: \n" +
+                        "Transformation Index: " + triangle.TransformationIndex + "\n" +
+                        "Material Index: " + triangle.MaterialIndex + "\n" +
+                        "First Vertex: " + "x: " + triangle.FirstVertex.XValue + " y: " + triangle.FirstVertex.YValue + " z: " + triangle.FirstVertex.ZValue + "\n" +
+                        "Second Vertex: " + "x: " + triangle.SecondVertex.XValue + " y: " + triangle.SecondVertex.YValue + " z: " + triangle.SecondVertex.ZValue + "\n" +
+                        "Third Vertex: " + "x: " + triangle.ThirdVertex.XValue + " y: " + triangle.ThirdVertex.YValue + " z: " + triangle.ThirdVertex.ZValue);
+                    Console.WriteLine("---------------------------------------------------------");
+                }
+                Console.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");*/
+                loop++;
             }
             Console.WriteLine("#######################################");
-            foreach (string material in materials)
+            foreach (Sphere sphere in spheresList)
             {
-                Console.WriteLine("Material: \n" + material);
+                Console.WriteLine("---------------------------------------------------------");
+                Console.WriteLine("Sphere: \n" +
+                    "Transformation Index: " + sphere.TransformationIndex + "\n" +
+                    "Material Index: " + sphere.MaterialIndex);
+                Console.WriteLine("---------------------------------------------------------");
             }
             Console.WriteLine("#######################################");
-            foreach (string triangle in triangles)
+            foreach (Box box in boxesList)
             {
-                Console.WriteLine("Triangle: \n" + triangle);
-            }
-            Console.WriteLine("#######################################");
-            foreach (string sphere in spheres)
-            {
-                Console.WriteLine("Sphere: \n" + sphere);
-            }
-            Console.WriteLine("#######################################");
-            foreach (string box in boxes)
-            {
-                Console.WriteLine("Box: \n" + box);
+                Console.WriteLine("---------------------------------------------------------");
+                Console.WriteLine("Box: \n" +
+                    "Transformation Index: " + box.TransformationIndex + "\n" +
+                    "Material Index: " + box.MaterialIndex);
+                Console.WriteLine("---------------------------------------------------------");
             }
             Console.WriteLine("#######################################");
 

@@ -13,7 +13,7 @@ namespace RayTracer.Model
         public Vector3 ThirdVertex { get; set; }
         public Vector3 Normal { get; set; }
 
-        public Triangle(int TransformationIndex,int MaterialIndex ,Vector3 first, Vector3 second, Vector3 third)
+        public Triangle(int TransformationIndex, int MaterialIndex ,Vector3 first, Vector3 second, Vector3 third)
         {
             this.TransformationIndex = TransformationIndex;
             this.MaterialIndex = MaterialIndex;
