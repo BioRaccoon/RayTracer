@@ -67,7 +67,6 @@ namespace RayTracer
                 Console.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 loop++;
             }
-
         }
 
         public bool readFile()

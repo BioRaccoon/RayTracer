@@ -90,13 +90,23 @@ namespace RayTracer.Utils
 
         public void segmentsConverter()
         {
+            double colorRedValue = 0;
+            double colorGreenValue = 0;
+            double colorBlueValue = 0;
             foreach (string imageString in images)
             {
                 string[] imageTemp = imageString.Split('\n');
                 string[] widthHeight = imageTemp[0].Split(' ');
                 string[] stringImageColor3 = imageTemp[1].Split(' ');
+                colorRedValue = double.TryParse(stringImageColor3[0].Replace(',', '.'), out colorRedValue) ? colorRedValue : double.Parse(stringImageColor3[0].Replace(".", ","));
+                colorGreenValue = double.TryParse(stringImageColor3[1].Replace(',', '.'), out colorGreenValue) ? colorGreenValue : double.Parse(stringImageColor3[1].Replace(".", ","));
+                colorBlueValue = double.TryParse(stringImageColor3[2].Replace(',', '.'), out colorBlueValue) ? colorBlueValue : double.Parse(stringImageColor3[2].Replace(".", ","));
+                /*if (!double.TryParse(redValue, out colorRedValue))
+                {
+                    colorRedValue = double.Parse(redValue.Replace(".", ","));
+                }*/
                 image = new Image(int.Parse(widthHeight[0]), int.Parse(widthHeight[1]), 
-                    new Color3(double.Parse(stringImageColor3[0]), double.Parse(stringImageColor3[1]), double.Parse(stringImageColor3[2])));
+                    new Color3(colorRedValue, colorGreenValue, colorBlueValue));
             }
             /*foreach (string transformationString in transformations)
             {
@@ -104,14 +114,19 @@ namespace RayTracer.Utils
             foreach (string cameraString in cameras)
             {
                 string[] cameraTemp = cameraString.Split('\n');
-                camera = new Camera(int.Parse(cameraTemp[0]), double.Parse(cameraTemp[1]), double.Parse(cameraTemp[2]));
+                double cameraDistance = double.TryParse(cameraTemp[1].Replace(',', '.'), out cameraDistance) ? cameraDistance : double.Parse(cameraTemp[1].Replace(".", ","));
+                double cameraFOV = double.TryParse(cameraTemp[2].Replace(',', '.'), out cameraFOV) ? cameraFOV : double.Parse(cameraTemp[2].Replace(".", ","));
+                camera = new Camera(int.Parse(cameraTemp[0]), cameraDistance, cameraFOV);
             }
             foreach (string lightString in lights)
             {
                 string[] lightTemp = lightString.Split('\n');
                 string[] stringLightColor3 = lightTemp[1].Split(' ');
+                colorRedValue = double.TryParse(stringLightColor3[0].Replace(',', '.'), out colorRedValue) ? colorRedValue : double.Parse(stringLightColor3[0].Replace(".", ","));
+                colorGreenValue = double.TryParse(stringLightColor3[1].Replace(',', '.'), out colorGreenValue) ? colorGreenValue : double.Parse(stringLightColor3[1].Replace(".", ","));
+                colorBlueValue = double.TryParse(stringLightColor3[2].Replace(',', '.'), out colorBlueValue) ? colorBlueValue : double.Parse(stringLightColor3[2].Replace(".", ","));
                 LightSource light = new LightSource(int.Parse(lightTemp[0]), 
-                    new Color3(double.Parse(stringLightColor3[0]), double.Parse(stringLightColor3[1]), double.Parse(stringLightColor3[2])));
+                    new Color3(colorRedValue, colorGreenValue, colorBlueValue));
                 lightsList.Add(light);
             }
             foreach (string materialString in materials)
@@ -119,13 +134,19 @@ namespace RayTracer.Utils
                 string[] materialTemp = materialString.Split('\n');
                 string[] stringMaterialColor3 = materialTemp[1].Split(' ');
                 string[] stringLightEffects = materialTemp[1].Split(' ');
+                colorRedValue = double.TryParse(stringMaterialColor3[0].Replace(',', '.'), out colorRedValue) ? colorRedValue : double.Parse(stringMaterialColor3[0].Replace(".", ","));
+                colorGreenValue = double.TryParse(stringMaterialColor3[1].Replace(',', '.'), out colorGreenValue) ? colorGreenValue : double.Parse(stringMaterialColor3[1].Replace(".", ","));
+                colorBlueValue = double.TryParse(stringMaterialColor3[2].Replace(',', '.'), out colorBlueValue) ? colorBlueValue : double.Parse(stringMaterialColor3[2].Replace(".", ","));
+
+                double ambient = double.TryParse(stringLightEffects[0].Replace(',', '.'), out ambient) ? ambient : double.Parse(stringLightEffects[0].Replace(".", ","));
+                double difuse = double.TryParse(stringLightEffects[1].Replace(',', '.'), out difuse) ? difuse : double.Parse(stringLightEffects[1].Replace(".", ","));
+                double specular = double.TryParse(stringLightEffects[2].Replace(',', '.'), out specular) ? specular : double.Parse(stringLightEffects[2].Replace(".", ","));
+                double refraction = double.TryParse(stringLightEffects[3].Replace(',', '.'), out refraction) ? refraction : double.Parse(stringLightEffects[3].Replace(".", ","));
+                double refractionIndex = double.TryParse(stringLightEffects[4].Replace(',', '.'), out refractionIndex) ? refractionIndex : double.Parse(stringLightEffects[4].Replace(".", ","));
+
                 Material material = new Material(
-                    new Color3(double.Parse(stringMaterialColor3[0]), double.Parse(stringMaterialColor3[1]), double.Parse(stringMaterialColor3[2])),
-                    double.Parse(stringLightEffects[0]), 
-                    double.Parse(stringLightEffects[1]), 
-                    double.Parse(stringLightEffects[2]), 
-                    double.Parse(stringLightEffects[3]), 
-                    double.Parse(stringLightEffects[4]));
+                    new Color3(colorRedValue, colorGreenValue, colorBlueValue),
+                    ambient, difuse, specular, refraction, refractionIndex);
                 materialsList.Add(material);
             }
             foreach (string triangleString in triangles)
@@ -140,10 +161,24 @@ namespace RayTracer.Utils
                     string[] stringTriangleFirstVertex = triangleTemp[i+1].Split(' ');
                     string[] stringTriangleSecondVertex = triangleTemp[i+2].Split(' ');
                     string[] stringTriangleThirdVertex = triangleTemp[i+3].Split(' ');
+
+                    double vertexXValue = double.TryParse(stringTriangleFirstVertex[0].Replace(',', '.'), out vertexXValue) ? vertexXValue : double.Parse(stringTriangleFirstVertex[0].Replace(".", ","));
+                    double vertexYValue = double.TryParse(stringTriangleFirstVertex[1].Replace(',', '.'), out vertexYValue) ? vertexYValue : double.Parse(stringTriangleFirstVertex[1].Replace(".", ","));
+                    double vertexZValue = double.TryParse(stringTriangleFirstVertex[2].Replace(',', '.'), out vertexZValue) ? vertexZValue : double.Parse(stringTriangleFirstVertex[2].Replace(".", ","));
+                    Vector3 firstVertex = new Vector3(vertexXValue, vertexYValue, vertexZValue);
+                    
+                    vertexXValue = double.TryParse(stringTriangleSecondVertex[0].Replace(',', '.'), out vertexXValue) ? vertexXValue : double.Parse(stringTriangleSecondVertex[0].Replace(".", ","));
+                    vertexYValue = double.TryParse(stringTriangleSecondVertex[1].Replace(',', '.'), out vertexYValue) ? vertexYValue : double.Parse(stringTriangleSecondVertex[1].Replace(".", ","));
+                    vertexZValue = double.TryParse(stringTriangleSecondVertex[2].Replace(',', '.'), out vertexZValue) ? vertexZValue : double.Parse(stringTriangleSecondVertex[2].Replace(".", ","));
+                    Vector3 secondVertex = new Vector3(vertexXValue, vertexYValue, vertexZValue);
+                    
+                    vertexXValue = double.TryParse(stringTriangleThirdVertex[0].Replace(',', '.'), out vertexXValue) ? vertexXValue : double.Parse(stringTriangleThirdVertex[0].Replace(".", ","));
+                    vertexYValue = double.TryParse(stringTriangleThirdVertex[1].Replace(',', '.'), out vertexYValue) ? vertexYValue : double.Parse(stringTriangleThirdVertex[1].Replace(".", ","));
+                    vertexZValue = double.TryParse(stringTriangleThirdVertex[2].Replace(',', '.'), out vertexZValue) ? vertexZValue : double.Parse(stringTriangleThirdVertex[2].Replace(".", ","));
+                    Vector3 thirdVertex = new Vector3(vertexXValue, vertexYValue, vertexZValue);
+
                     Triangle triangle = new Triangle(transformationIndex, int.Parse(triangleTemp[i]),
-                        new Vector3(double.Parse(stringTriangleFirstVertex[0]), double.Parse(stringTriangleFirstVertex[1]), double.Parse(stringTriangleFirstVertex[2])),
-                        new Vector3(double.Parse(stringTriangleSecondVertex[0]), double.Parse(stringTriangleSecondVertex[1]), double.Parse(stringTriangleSecondVertex[2])),
-                        new Vector3(double.Parse(stringTriangleThirdVertex[0]), double.Parse(stringTriangleThirdVertex[1]), double.Parse(stringTriangleThirdVertex[2])));
+                        firstVertex, secondVertex, thirdVertex);
                     allTriangles.Add(triangle);
                     tempTriangleList.Add(triangle);
                     i += 3;
