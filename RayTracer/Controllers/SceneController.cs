@@ -37,9 +37,8 @@ namespace RayTracer
             if (success) {
                 fillFormFields();
                 calculateTrianglesNormalVectors();
-            }
-
-            fileLoaded = true;
+                fileLoaded = true;
+            }       
         }
         private void startRenderBtn_Click(object sender, EventArgs e)
         {
