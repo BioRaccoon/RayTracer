@@ -267,7 +267,7 @@ namespace RayTracer.Utils
             Console.WriteLine("#######################################");
             Console.WriteLine("---------------------------------------------------------");
             Console.WriteLine("Image: \n" + 
-                "Dimensions: " + image.Width + "x" + image.Length + "\n" + 
+                "Dimensions: " + image.Width + "x" + image.Height + "\n" + 
                 "R: " + image.BackgroundColor.Red + " G: " + image.BackgroundColor.Green + " B: " + image.BackgroundColor.Blue);
             Console.WriteLine("---------------------------------------------------------");
             /*Console.WriteLine("#######################################");

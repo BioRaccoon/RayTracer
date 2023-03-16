@@ -29,25 +29,23 @@ namespace RayTracer.Model
         /// <param name="green">O valor verde da cor.</param>
         /// <param name="blue">O valor azul da cor.</param>
         public Color3(double red, double green, double blue){
-
-            if (red < 0.0 || red > 1.0)
-            {
-                throw new ArgumentOutOfRangeException("red","The red value is not between 0 and 1!");
-            }
-
-            if (green < 0.0 || green > 1.0)
-            {
-                throw new ArgumentOutOfRangeException("green", "The green value is not between 0 and 1!");
-            }
-
-            if(blue < 0.0 || blue > 1.0)
-            {
-                throw new ArgumentOutOfRangeException("blue", "The blue value is not between 0 and 1!");
-            }
-
             Red = red;
             Green = green;
             Blue = blue;
+        }
+
+
+        public Color3 CheckRange()
+        {
+            if (Red > 1.0) Red = 1.0;
+            if (Blue > 1.0) Blue = 1.0;
+            if (Green > 1.0) Green = 1.0;
+
+            if (Red < 0.0) Red = 0.0;
+            if (Blue < 0.0) Blue = 0.0;
+            if (Green < 0.0) Green = 0.0;
+
+            return this;
         }
     }
 }

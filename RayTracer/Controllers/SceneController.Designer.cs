@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.raytracerBox = new System.Windows.Forms.GroupBox();
+            this.rayTracerBox = new System.Windows.Forms.GroupBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.sceneCtrlsBox = new System.Windows.Forms.GroupBox();
             this.loadSceneBtn = new System.Windows.Forms.Button();
@@ -46,7 +46,7 @@
             this.rendererCtrlsBox = new System.Windows.Forms.GroupBox();
             this.startRenderBtn = new System.Windows.Forms.Button();
             this.recursionCtrlsBox = new System.Windows.Forms.GroupBox();
-            this.domainUpDown3 = new System.Windows.Forms.DomainUpDown();
+            this.recursiveIndex = new System.Windows.Forms.DomainUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.lightEffectsCtrlsBox = new System.Windows.Forms.GroupBox();
             this.refractionCheckBox = new System.Windows.Forms.CheckBox();
@@ -55,7 +55,7 @@
             this.ambientReflectionCheckBox = new System.Windows.Forms.CheckBox();
             this.backgroundCtrlsBox = new System.Windows.Forms.GroupBox();
             this.backgroundColorBtn = new System.Windows.Forms.Button();
-            this.raytracerBox.SuspendLayout();
+            this.rayTracerBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.sceneCtrlsBox.SuspendLayout();
             this.imageCtrlsBox.SuspendLayout();
@@ -66,22 +66,23 @@
             this.backgroundCtrlsBox.SuspendLayout();
             this.SuspendLayout();
             // 
-            // raytracerBox
+            // rayTracerBox
             // 
-            this.raytracerBox.Controls.Add(this.pictureBox1);
-            this.raytracerBox.Location = new System.Drawing.Point(12, 12);
-            this.raytracerBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.raytracerBox.Name = "raytracerBox";
-            this.raytracerBox.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.raytracerBox.Size = new System.Drawing.Size(664, 382);
-            this.raytracerBox.TabIndex = 0;
-            this.raytracerBox.TabStop = false;
+            this.rayTracerBox.Controls.Add(this.pictureBox1);
+            this.rayTracerBox.Location = new System.Drawing.Point(12, 12);
+            this.rayTracerBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.rayTracerBox.Name = "rayTracerBox";
+            this.rayTracerBox.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.rayTracerBox.Size = new System.Drawing.Size(664, 382);
+            this.rayTracerBox.TabIndex = 0;
+            this.rayTracerBox.TabStop = false;
             // 
             // pictureBox1
             // 
             this.pictureBox1.Location = new System.Drawing.Point(6, 20);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(652, 357);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
@@ -261,10 +262,11 @@
             this.startRenderBtn.TabIndex = 0;
             this.startRenderBtn.Text = "Start";
             this.startRenderBtn.UseVisualStyleBackColor = true;
+            this.startRenderBtn.Click += new System.EventHandler(this.startRenderBtn_Click);
             // 
             // recursionCtrlsBox
             // 
-            this.recursionCtrlsBox.Controls.Add(this.domainUpDown3);
+            this.recursionCtrlsBox.Controls.Add(this.recursiveIndex);
             this.recursionCtrlsBox.Controls.Add(this.label3);
             this.recursionCtrlsBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.recursionCtrlsBox.Location = new System.Drawing.Point(431, 399);
@@ -276,16 +278,16 @@
             this.recursionCtrlsBox.TabStop = false;
             this.recursionCtrlsBox.Text = "Recursion";
             // 
-            // domainUpDown3
+            // recursiveIndex
             // 
-            this.domainUpDown3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.domainUpDown3.Location = new System.Drawing.Point(104, 37);
-            this.domainUpDown3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.domainUpDown3.Name = "domainUpDown3";
-            this.domainUpDown3.Size = new System.Drawing.Size(75, 26);
-            this.domainUpDown3.TabIndex = 3;
-            this.domainUpDown3.Text = "0";
-            this.domainUpDown3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.recursiveIndex.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.recursiveIndex.Location = new System.Drawing.Point(104, 37);
+            this.recursiveIndex.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.recursiveIndex.Name = "recursiveIndex";
+            this.recursiveIndex.Size = new System.Drawing.Size(75, 26);
+            this.recursiveIndex.TabIndex = 3;
+            this.recursiveIndex.Text = "0";
+            this.recursiveIndex.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label3
             // 
@@ -397,11 +399,11 @@
             this.Controls.Add(this.cameraCtrlsBox);
             this.Controls.Add(this.imageCtrlsBox);
             this.Controls.Add(this.sceneCtrlsBox);
-            this.Controls.Add(this.raytracerBox);
+            this.Controls.Add(this.rayTracerBox);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "RayTracerForm";
             this.Text = "Ray Tracer";
-            this.raytracerBox.ResumeLayout(false);
+            this.rayTracerBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.sceneCtrlsBox.ResumeLayout(false);
             this.imageCtrlsBox.ResumeLayout(false);
@@ -420,7 +422,7 @@
 
         #endregion
 
-        private System.Windows.Forms.GroupBox raytracerBox;
+        private System.Windows.Forms.GroupBox rayTracerBox;
         private System.Windows.Forms.GroupBox sceneCtrlsBox;
         private System.Windows.Forms.Button loadSceneBtn;
         private System.Windows.Forms.GroupBox imageCtrlsBox;
@@ -436,7 +438,7 @@
         private System.Windows.Forms.GroupBox rendererCtrlsBox;
         private System.Windows.Forms.Button startRenderBtn;
         private System.Windows.Forms.GroupBox recursionCtrlsBox;
-        private System.Windows.Forms.DomainUpDown domainUpDown3;
+        private System.Windows.Forms.DomainUpDown recursiveIndex;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button saveImageBtn;
         private System.Windows.Forms.GroupBox lightEffectsCtrlsBox;

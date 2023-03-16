@@ -14,7 +14,7 @@ namespace RayTracer.Model
         /// <summary>
         /// O comprimento da imagem em pixeis.
         /// </summary>
-        public int Length { get; set; }
+        public int Height { get; set; }
         /// <summary>
         /// A largura da imagem em pixeis.
         /// </summary>
@@ -33,7 +33,7 @@ namespace RayTracer.Model
                 throw new ArgumentOutOfRangeException("length", "The width cannot be below zero!");
             }
 
-            Length = length;
+            Height = length;
             Width = width;
             BackgroundColor = backgroundColor;
         }
