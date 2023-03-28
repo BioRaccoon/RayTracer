@@ -19,7 +19,7 @@ namespace RayTracer.Controllers
                Vector3 edgeAB = new Vector3(triangle.SecondVertex.Subtract(triangle.FirstVertex));
                Vector3 edgeBC = new Vector3(triangle.ThirdVertex.Subtract(triangle.FirstVertex));
                Vector3 normalVector = edgeAB.CrossProduct(edgeBC);
-               triangle.addNormalVector(normalVector.Normalize());
+               triangle.Normal = normalVector.Normalize();
             }
         }
     }

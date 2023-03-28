@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.rayTracerBox = new System.Windows.Forms.GroupBox();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.rayTracerPictBox = new System.Windows.Forms.PictureBox();
             this.sceneCtrlsBox = new System.Windows.Forms.GroupBox();
             this.loadSceneBtn = new System.Windows.Forms.Button();
             this.imageCtrlsBox = new System.Windows.Forms.GroupBox();
@@ -55,8 +55,10 @@
             this.ambientReflectionCheckBox = new System.Windows.Forms.CheckBox();
             this.backgroundCtrlsBox = new System.Windows.Forms.GroupBox();
             this.backgroundColorBtn = new System.Windows.Forms.Button();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.lblProgress = new System.Windows.Forms.Label();
             this.rayTracerBox.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.rayTracerPictBox)).BeginInit();
             this.sceneCtrlsBox.SuspendLayout();
             this.imageCtrlsBox.SuspendLayout();
             this.cameraCtrlsBox.SuspendLayout();
@@ -68,7 +70,7 @@
             // 
             // rayTracerBox
             // 
-            this.rayTracerBox.Controls.Add(this.pictureBox1);
+            this.rayTracerBox.Controls.Add(this.rayTracerPictBox);
             this.rayTracerBox.Location = new System.Drawing.Point(12, 12);
             this.rayTracerBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.rayTracerBox.Name = "rayTracerBox";
@@ -77,20 +79,20 @@
             this.rayTracerBox.TabIndex = 0;
             this.rayTracerBox.TabStop = false;
             // 
-            // pictureBox1
+            // rayTracerPictBox
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(6, 20);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(652, 357);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
+            this.rayTracerPictBox.Location = new System.Drawing.Point(6, 20);
+            this.rayTracerPictBox.Name = "rayTracerPictBox";
+            this.rayTracerPictBox.Size = new System.Drawing.Size(652, 357);
+            this.rayTracerPictBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.rayTracerPictBox.TabIndex = 0;
+            this.rayTracerPictBox.TabStop = false;
             // 
             // sceneCtrlsBox
             // 
             this.sceneCtrlsBox.Controls.Add(this.loadSceneBtn);
             this.sceneCtrlsBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sceneCtrlsBox.Location = new System.Drawing.Point(12, 399);
+            this.sceneCtrlsBox.Location = new System.Drawing.Point(12, 436);
             this.sceneCtrlsBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.sceneCtrlsBox.Name = "sceneCtrlsBox";
             this.sceneCtrlsBox.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -119,7 +121,7 @@
             this.imageCtrlsBox.Controls.Add(this.HeightLabel);
             this.imageCtrlsBox.Controls.Add(this.widthLabel);
             this.imageCtrlsBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.imageCtrlsBox.Location = new System.Drawing.Point(12, 495);
+            this.imageCtrlsBox.Location = new System.Drawing.Point(12, 532);
             this.imageCtrlsBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.imageCtrlsBox.Name = "imageCtrlsBox";
             this.imageCtrlsBox.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -138,6 +140,7 @@
             this.saveImageBtn.TabIndex = 0;
             this.saveImageBtn.Text = "Save Image";
             this.saveImageBtn.UseVisualStyleBackColor = true;
+            this.saveImageBtn.Click += new System.EventHandler(this.saveImageBtn_Click);
             // 
             // imageHeightCtrl
             // 
@@ -188,7 +191,7 @@
             this.cameraCtrlsBox.Controls.Add(this.imageFOVLabel);
             this.cameraCtrlsBox.Controls.Add(this.imageDistanceLabel);
             this.cameraCtrlsBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cameraCtrlsBox.Location = new System.Drawing.Point(217, 495);
+            this.cameraCtrlsBox.Location = new System.Drawing.Point(217, 532);
             this.cameraCtrlsBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.cameraCtrlsBox.Name = "cameraCtrlsBox";
             this.cameraCtrlsBox.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -243,7 +246,7 @@
             // 
             this.rendererCtrlsBox.Controls.Add(this.startRenderBtn);
             this.rendererCtrlsBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rendererCtrlsBox.Location = new System.Drawing.Point(225, 399);
+            this.rendererCtrlsBox.Location = new System.Drawing.Point(225, 436);
             this.rendererCtrlsBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.rendererCtrlsBox.Name = "rendererCtrlsBox";
             this.rendererCtrlsBox.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -269,7 +272,7 @@
             this.recursionCtrlsBox.Controls.Add(this.recursiveIndex);
             this.recursionCtrlsBox.Controls.Add(this.label3);
             this.recursionCtrlsBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.recursionCtrlsBox.Location = new System.Drawing.Point(431, 399);
+            this.recursionCtrlsBox.Location = new System.Drawing.Point(431, 436);
             this.recursionCtrlsBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.recursionCtrlsBox.Name = "recursionCtrlsBox";
             this.recursionCtrlsBox.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -306,7 +309,7 @@
             this.lightEffectsCtrlsBox.Controls.Add(this.difuseReflectionCheckBox);
             this.lightEffectsCtrlsBox.Controls.Add(this.ambientReflectionCheckBox);
             this.lightEffectsCtrlsBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lightEffectsCtrlsBox.Location = new System.Drawing.Point(449, 495);
+            this.lightEffectsCtrlsBox.Location = new System.Drawing.Point(449, 532);
             this.lightEffectsCtrlsBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.lightEffectsCtrlsBox.Name = "lightEffectsCtrlsBox";
             this.lightEffectsCtrlsBox.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -367,7 +370,7 @@
             // 
             this.backgroundCtrlsBox.Controls.Add(this.backgroundColorBtn);
             this.backgroundCtrlsBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.backgroundCtrlsBox.Location = new System.Drawing.Point(225, 617);
+            this.backgroundCtrlsBox.Location = new System.Drawing.Point(225, 654);
             this.backgroundCtrlsBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.backgroundCtrlsBox.Name = "backgroundCtrlsBox";
             this.backgroundCtrlsBox.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -387,11 +390,31 @@
             this.backgroundColorBtn.Text = "Choose Color";
             this.backgroundColorBtn.UseVisualStyleBackColor = true;
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(18, 399);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(474, 23);
+            this.progressBar1.TabIndex = 9;
+            // 
+            // lblProgress
+            // 
+            this.lblProgress.AutoSize = true;
+            this.lblProgress.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblProgress.Location = new System.Drawing.Point(498, 401);
+            this.lblProgress.Name = "lblProgress";
+            this.lblProgress.Size = new System.Drawing.Size(170, 20);
+            this.lblProgress.TabIndex = 10;
+            this.lblProgress.Text = "Waiting for renderer...";
+            this.lblProgress.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // RayTracerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(688, 720);
+            this.ClientSize = new System.Drawing.Size(689, 755);
+            this.Controls.Add(this.lblProgress);
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.backgroundCtrlsBox);
             this.Controls.Add(this.lightEffectsCtrlsBox);
             this.Controls.Add(this.recursionCtrlsBox);
@@ -404,7 +427,7 @@
             this.Name = "RayTracerForm";
             this.Text = "Ray Tracer";
             this.rayTracerBox.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.rayTracerPictBox)).EndInit();
             this.sceneCtrlsBox.ResumeLayout(false);
             this.imageCtrlsBox.ResumeLayout(false);
             this.imageCtrlsBox.PerformLayout();
@@ -417,6 +440,7 @@
             this.lightEffectsCtrlsBox.PerformLayout();
             this.backgroundCtrlsBox.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -448,7 +472,9 @@
         private System.Windows.Forms.CheckBox refractionCheckBox;
         private System.Windows.Forms.GroupBox backgroundCtrlsBox;
         private System.Windows.Forms.Button backgroundColorBtn;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox rayTracerPictBox;
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Label lblProgress;
     }
 }
 

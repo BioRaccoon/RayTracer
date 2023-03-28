@@ -132,7 +132,7 @@ namespace RayTracer.Utils
             foreach (string materialString in materials)
             {
                 string[] materialTemp = materialString.Split('\n');
-                string[] stringMaterialColor3 = materialTemp[1].Split(' ');
+                string[] stringMaterialColor3 = materialTemp[0].Split(' ');
                 string[] stringLightEffects = materialTemp[1].Split(' ');
                 colorRedValue = double.TryParse(stringMaterialColor3[0].Replace(',', '.'), out colorRedValue) ? colorRedValue : double.Parse(stringMaterialColor3[0].Replace(".", ","));
                 colorGreenValue = double.TryParse(stringMaterialColor3[1].Replace(',', '.'), out colorGreenValue) ? colorGreenValue : double.Parse(stringMaterialColor3[1].Replace(".", ","));

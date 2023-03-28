@@ -47,5 +47,11 @@ namespace RayTracer.Model
 
             return this;
         }
+
+        public string toString()
+        {
+            return Red+","+Green+","+Blue;
+        }
+
     }
 }

@@ -8,12 +8,12 @@ namespace RayTracer.Model
 {
     internal class Hit
     {
-        bool Found { get; set; }
-        Material MaterialHit { get; set; }
-        Vector3 IntersectionPoint { get; set; }
-        Vector3 NormalVector { get; set; }
-        double TotalDistance { get; set; }
-        double FoundDistance { get; set; }
+        public bool Found { get; set; }
+        public Material MaterialHit { get; set; }
+        public Vector3 IntersectionPoint { get; set; }
+        public Vector3 NormalVector { get; set; }
+        public double TotalDistance { get; set; }
+        public double FoundDistance { get; set; }
 
         public Hit(bool foundHit, Material materialHit, Vector3 intersectionPoint, Vector3 normal, double distance, double foundDistance) {
             Found = foundHit;
@@ -23,6 +23,11 @@ namespace RayTracer.Model
             TotalDistance = distance;
             FoundDistance = foundDistance;
         }
+
+        public Hit()
+        {
+        }
+
 
     }
 }

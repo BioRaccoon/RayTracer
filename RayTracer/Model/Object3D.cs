@@ -10,5 +10,9 @@ namespace RayTracer.Model
     {
         public int TransformationIndex { get; set; }
         public int MaterialIndex { get; set; }
+
+        public abstract bool intersect(Ray ray, Hit hit);
+
+        public abstract void toString();
     }
 }
