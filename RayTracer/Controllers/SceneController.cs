@@ -36,21 +36,13 @@ namespace RayTracer
             startRenderBtn.Enabled = false;
             saveImageBtn.Enabled = false;
             backgroundColorBtn.Enabled = false;
-
-            double[,,] matrix = new double[4, 4] {
-    { { 1, 2, 3 , 4 }, { 1, 2, 3 , 4 },{ 1, 2, 3 , 4 },{ 1, 2, 3 , 4 }};
-};
-
-            Transformation transformation = new Transformation(matrix);
-
-            double[,,] invertedMatrix = transformation.InvertMatrix(matrix);
-
         }
 
         private void loadSceneBtn_Click(object sender, EventArgs e)
         {
             bool success = readFile();
-            if (success) {
+            if (success)
+            {
                 fillFormFields();
                 calculateTrianglesNormalVectors();
                 foreach (Material material in materials)
@@ -63,6 +55,7 @@ namespace RayTracer
                 backgroundColorBtn.Enabled = true;
             }
         }
+
         private void startRenderBtn_Click(object sender, EventArgs e)
         {
             if (fileLoaded)

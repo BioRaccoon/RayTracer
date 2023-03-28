@@ -8,23 +8,23 @@ namespace RayTracer.Model
 {
     internal class Transformation
     {
-        double[,] TransformationMatrix = new double[4, 4];
+        public double[,] TransformationMatrix {get; set;}
 
         public Transformation(double[,] transformationMatrix)
         {
             TransformationMatrix = transformationMatrix;
         }
 
-        public double[,]  IdentityMatrix()
+        public double[,] IdentityMatrix()
         {
-            double[,] result = new double[4, 4] { {1.0, 0 ,0 ,0 },
-                {0, 1.0 ,0 ,0 },
-                {0, 0 ,1.0 ,0 },
-                {0, 0 ,0 ,1.0 }
+            double[,] result = new double[4, 4] {
+                {1.0, 0 , 0 , 0 },
+                {0, 1.0 , 0 , 0 },
+                {0, 0 , 1.0 , 0 },
+                {0, 0 , 0 , 1.0 }
             };
             return result;
         }
-
 
         public double[] MultiplyWithPoint(Vector4 pointA, Vector4 pointB) 
         {
@@ -90,20 +90,19 @@ namespace RayTracer.Model
 
         public double[,] TransposeMatrix(double[,] matrix)
         {
-            int xLength = matrix.GetLength(0);
-            int yLength = matrix.GetLength(1);
+            int rows = matrix.GetLength(0);
+            int columns = matrix.GetLength(1);
+            double[,] result = new double[columns, rows];
 
-            double[,] transposedMatrix = new double[yLength, xLength];
-
-            for (int i = 0; i < xLength; i++)
+            for (int i = 0; i < rows; i++)
             {
-                for (int j = 0; j < yLength; j++)
+                for (int j = 0; j < columns; j++)
                 {
-                    transposedMatrix[j, i] = matrix[i, j];
+                    result[j, i] = matrix[i, j];
                 }
             }
 
-            return transposedMatrix;
+            return result;
         }
 
         public double[,] rotateX(double a) 
@@ -130,5 +129,77 @@ namespace RayTracer.Model
 
             return MultiplyWithMatrix(rotateXMatrix);
         }
+
+        // Using Gaussian elimination method
+        public double[,] InvertMatrix(double[,] matrix)
+        {
+            // Check if matrix is square
+            int n = matrix.GetLength(0);
+            if (n != matrix.GetLength(1))
+            {
+                throw new ArgumentException("Matrix must be square.");
+            }
+
+            // Create an identity matrix
+            double[,] identity = new double[n, n];
+            for (int i = 0; i < n; i++)
+            {
+                identity[i, i] = 1.0;
+            }
+
+            // Copy the input matrix to a new matrix to avoid modifying the original
+            double[,] A = new double[n, n];
+            Array.Copy(matrix, A, n * n);
+
+            // Forward elimination
+            for (int i = 0; i < n; i++)
+            {
+                double pivot = A[i, i];
+
+                if (pivot == 0.0)
+                {
+                    throw new ArgumentException("Matrix is singular and cannot be inverted.");
+                }
+
+                for (int j = i + 1; j < n; j++)
+                {
+                    double factor = A[j, i] / pivot;
+                    for (int k = 0; k < n; k++)
+                    {
+                        A[j, k] -= factor * A[i, k];
+                        identity[j, k] -= factor * identity[i, k];
+                    }
+                }
+            }
+
+            // Backward substitution
+            for (int i = n - 1; i > 0; i--)
+            {
+                for (int j = i - 1; j >= 0; j--)
+                {
+                    double factor = A[j, i] / A[i, i];
+                    for (int k = 0; k < n; k++)
+                    {
+                        A[j, k] -= factor * A[i, k];
+                        identity[j, k] -= factor * identity[i, k];
+                    }
+                }
+            }
+
+            // Scale the rows of the identity matrix to obtain the inverse
+            double[,] inverse = new double[n, n];
+            for (int i = 0; i < n; i++)
+            {
+                double scale = A[i, i];
+                for (int j = 0; j < n; j++)
+                {
+                    inverse[i, j] = identity[i, j] / scale;
+                }
+            }
+
+            return inverse;
+        }
+
+
     }
 }
