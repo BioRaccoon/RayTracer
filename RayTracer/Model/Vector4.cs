@@ -56,5 +56,10 @@ namespace RayTracer.Model
                 ZValue / Wvalue
                 );
         }
+
+        public double[] ConvertToMatrix()
+        {
+            return new double[4] { XValue, YValue, ZValue, Wvalue };
+        }
     }
 }
