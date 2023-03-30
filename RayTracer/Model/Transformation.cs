@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace RayTracer.Model
 {
@@ -105,7 +106,7 @@ namespace RayTracer.Model
             return result;
         }
 
-        public double[,] rotateX(double a) 
+        public double[,] RotateX(double a) 
         {
             double [,] rotateXMatrix = new double[4,4];
 
@@ -128,6 +129,78 @@ namespace RayTracer.Model
             rotateXMatrix[3, 3] = 1.0;
 
             return MultiplyWithMatrix(rotateXMatrix);
+        }
+
+
+        public double [,] RotateY(double a) // cria a matriz correspondente à rotação em torno do eixo Y e multiplica a matriz de transformação composta pela matriz recém-criada
+        {
+            double[,] rotateYMatrix = new double[4, 4];
+
+            a *= Math.PI / 180.0;
+            rotateYMatrix[0,0] = Math.Cos(a);
+            rotateYMatrix[0,1] = 0.0;
+            rotateYMatrix[0,2] = Math.Sin(a);
+            rotateYMatrix[0,3] = 0.0;
+            rotateYMatrix[1,0] = 0.0;
+            rotateYMatrix[1,1] = 1.0;
+            rotateYMatrix[1,2] = 0.0;
+            rotateYMatrix[1,3] = 0.0;
+            rotateYMatrix[2,0] = -Math.Sin(a);
+            rotateYMatrix[2,1] = 0.0;
+            rotateYMatrix[2,2] = Math.Cos(a);
+            rotateYMatrix[2,3] = 0.0;
+            rotateYMatrix[3,0] = 0.0;
+            rotateYMatrix[3,1] = 0.0;
+            rotateYMatrix[3,2] = 0.0;
+            rotateYMatrix[3,3] = 1.0;
+            return MultiplyWithMatrix(rotateYMatrix);
+        }
+
+        public double[,] RotateZ(double a) // cria a matriz correspondente à rotação em torno do eixo Y e multiplica a matriz de transformação composta pela matriz recém-criada
+        {
+            double[,] rotateZMatrix = new double[4, 4];
+
+            a *= Math.PI / 180.0;
+            rotateZMatrix[0, 0] = Math.Cos(a);
+            rotateZMatrix[0, 1] = -Math.Sin(a);
+            rotateZMatrix[0, 2] = 0.0;
+            rotateZMatrix[0, 3] = 0.0;
+            rotateZMatrix[1, 0] = Math.Sin(a);
+            rotateZMatrix[1, 1] = Math.Cos(a);
+            rotateZMatrix[1, 2] = 0.0;
+            rotateZMatrix[1, 3] = 0.0;
+            rotateZMatrix[2, 0] = 0.0;
+            rotateZMatrix[2, 1] = 0.0;
+            rotateZMatrix[2, 2] = 1.0;
+            rotateZMatrix[2, 3] = 0.0;
+            rotateZMatrix[3, 0] = 0.0;
+            rotateZMatrix[3, 1] = 0.0;
+            rotateZMatrix[3, 2] = 0.0;
+            rotateZMatrix[3, 3] = 1.0;
+            return MultiplyWithMatrix(rotateZMatrix);
+        }
+
+        public double[,] Scale(double x, double y, double z)
+        {
+            double [,] scaleMatrix = new double [4,4];
+
+            scaleMatrix[0,0] = x;
+            scaleMatrix[0,1] = 0.0;
+            scaleMatrix[0,2] = 0.0;
+            scaleMatrix[0,3] = 0.0;
+            scaleMatrix[1,0] = 0.0;
+            scaleMatrix[1,1] = y;
+            scaleMatrix[1,2] = 0.0;
+            scaleMatrix[1,3] = 0.0;
+            scaleMatrix[2,0] = 0.0;
+            scaleMatrix[2,1] = 0.0;
+            scaleMatrix[2,2] = z;
+            scaleMatrix[2,3] = 0.0;
+            scaleMatrix[3,0] = 0.0;
+            scaleMatrix[3,1] = 0.0;
+            scaleMatrix[3,2] = 0.0;
+            scaleMatrix[3,3] = 1.0;
+            return MultiplyWithMatrix(scaleMatrix);
         }
 
         // Using Gaussian elimination method
