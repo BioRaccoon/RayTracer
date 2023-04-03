@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RayTracer.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
@@ -25,6 +26,9 @@ namespace RayTracer.Model
         public bool intersect(Ray ray, Hit hit)
         {
 
+            ray.Origin = StaticFunctions.ConvertPointToObjectCoordinates(ray.Origin, CompositeMatrix);
+            ray.Direction = StaticFunctions.ConvertVectorToObjectCoordinates(ray.Origin, CompositeMatrix);
+
             double a = 1.0;
             double b = (ray.Direction.ScalarMultiplication(2)).DotProduct(ray.Origin);
             double c = (ray.Origin.DotProduct(ray.Origin))-(sphereRadius*sphereRadius);
@@ -48,6 +52,8 @@ namespace RayTracer.Model
 
             Vector3 intersectionPoint = ray.Direction.ScalarMultiplication(hit.TotalDistance).Add(ray.Origin);
 
+            intersectionPoint = StaticFunctions.ConvertPointToWorldCoordinates(intersectionPoint, CompositeMatrix);
+
             //Vector3 originIntersection = intersectionPoint.Subtract(ray.Origin);
 
             //double vNorma = calculateMagnitude(originIntersection);
@@ -59,9 +65,10 @@ namespace RayTracer.Model
                 hit.FoundDistance = hit.TotalDistance;
                 hit.IntersectionPoint = intersectionPoint;
                 hit.NormalVector = intersectionPoint.Subtract(sphereOrigin).Normalize();
+                hit.NormalVector = StaticFunctions.ConvertObjectNormalToWorldCoordinates(hit.NormalVector, CompositeMatrix);
 
             }
-            
+
             return true;
         }
 

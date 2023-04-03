@@ -9,22 +9,39 @@ namespace RayTracer.Model
 {
     internal class Transformation
     {
+        public List<string> types { get; set; }
         public double[,] TransformationMatrix {get; set;}
 
-        public Transformation(double[,] transformationMatrix)
+        public Transformation(List<string> types)
         {
+            this.types = types;
+            IdentityMatrix();
+        }
+
+        public Transformation(double[,] transformationMatrix) {
             TransformationMatrix = transformationMatrix;
         }
 
-        public double[,] IdentityMatrix()
+        public void IdentityMatrix()
         {
-            double[,] result = new double[4, 4] {
-                {1.0, 0 , 0 , 0 },
-                {0, 1.0 , 0 , 0 },
-                {0, 0 , 1.0 , 0 },
-                {0, 0 , 0 , 1.0 }
-            };
-            return result;
+            TransformationMatrix = new double[4, 4];
+
+            TransformationMatrix[0, 0] = 1.0;
+            TransformationMatrix[0, 1] = 0.0;
+            TransformationMatrix[0, 2] = 0.0;
+            TransformationMatrix[0, 3] = 0.0;
+            TransformationMatrix[1, 0] = 0.0;
+            TransformationMatrix[1, 1] = 1.0;
+            TransformationMatrix[1, 2] = 0.0;
+            TransformationMatrix[1, 3] = 0.0;
+            TransformationMatrix[2, 0] = 0.0;
+            TransformationMatrix[2, 1] = 0.0;
+            TransformationMatrix[2, 2] = 1.0;
+            TransformationMatrix[2, 3] = 0.0;
+            TransformationMatrix[3, 0] = 0.0;
+            TransformationMatrix[3, 1] = 0.0;
+            TransformationMatrix[3, 2] = 0.0;
+            TransformationMatrix[3, 3] = 1.0;
         }
 
         public double[] MultiplyWithPoint(Vector4 pointA, Vector4 pointB) 
@@ -36,32 +53,89 @@ namespace RayTracer.Model
             int i, j;
 
             for (i = 0; i < 4; i++)
+            {
                 pointBMatrix[i] = 0.0;
+            }
             for (i = 0; i < 4; i++)
+            {
                 for (j = 0; j < 4; j++)
+                {
                     pointBMatrix[i] += TransformationMatrix[i, j] * pointAMatrix[j];
+                }
+            }
             return pointBMatrix;
         }
 
-        public double[,] MultiplyWithMatrix(double [,] matrixA)
+        public double[,] MultiplyWithMatrix(double[,] matrixA) // multiplica duas matrizes 4 x 4
         {
-            if (matrixA.GetLength(1) != 4) throw new Exception("The array length must be 4.");
+            //if (matrixA.GetLength(1) != 4) throw new Exception("The array length must be 4.");
+        /*int i, j, k;
+        double [,] matrixB = new double[4,4];
+
+        for (i = 0; i < 4; i++)
+            for (j = 0; j < 4; j++)
+            {
+                matrixB[i,j] = TransformationMatrix[i,j];
+                TransformationMatrix[i,j] = 0.0;
+            }
+        for (i = 0; i < 4; i++)
+            for (j = 0; j < 4; j++)
+                for (k = 0; k < 4; k++)
+                    TransformationMatrix[i,j] += matrixB[i,k] * matrixA[k,j];
+
+        return TransformationMatrix; */
+
             int i, j, k;
-            double[,] matrixB = new double[4,4];
-            double[,] result = new double[4,4];
+            double[,] matrixB = new double[4, 4];
+            double[,] result = new double[4, 4];
 
             for (i = 0; i < 4; i++)
+            {
                 for (j = 0; j < 4; j++)
                 {
-                    matrixB[i,j] = TransformationMatrix[i,j];
-                    result[i,j] = 0.0;
+                    matrixB[i, j] = TransformationMatrix[i, j];
+                    result[i, j] = 0.0;
                 }
+            }
             for (i = 0; i < 4; i++)
+            {
                 for (j = 0; j < 4; j++)
+                {
                     for (k = 0; k < 4; k++)
-                        result[i,j] += matrixB[i,k] * matrixA[k,j];
+                    {
+                        result[i, j] += matrixB[i, k] * matrixA[k, j];
+                    }
+                }
+            }
             return result;
+
         }
+
+        /*
+
+         public double[,] MultiplyWithMatrix(double[,] matrixA)
+    {
+        if (matrixA.GetLength(1) != 4) throw new Exception("The array length must be 4.");
+        int i, j, k;
+        double[,] matrixB = new double[4, 4];
+        double[,] result = new double[4, 4];
+
+        for (i = 0; i < 4; i++)
+            for (j = 0; j < 4; j++)
+            {
+                matrixB[i, j] = TransformationMatrix[i, j];
+                result[i, j] = 0.0;
+            }
+        for (i = 0; i < 4; i++)
+            for (j = 0; j < 4; j++)
+                for (k = 0; k < 4; k++)
+                    result[i, j] += matrixB[i, k] * matrixA[k, j];
+        return result;
+
+    }
+
+        */
+
 
         public double[,] Translate(double x, double y, double z)
         {
@@ -84,9 +158,7 @@ namespace RayTracer.Model
             result[3,2] = 0.0;
             result[3,3] = 1.0;
 
-            result = MultiplyWithMatrix(result);
-
-            return result;
+            return MultiplyWithMatrix(result);
         }
 
         public double[,] TransposeMatrix(double[,] matrix)
@@ -111,8 +183,8 @@ namespace RayTracer.Model
             double [,] rotateXMatrix = new double[4,4];
 
             a *= Math.PI / 180.0;
-            rotateXMatrix[0,0] = 1.0;
-            rotateXMatrix[0,1] = 0.0;
+            rotateXMatrix[0, 0] = 1.0;
+            rotateXMatrix[0, 1] = 0.0;
             rotateXMatrix[0, 2] = 0.0;
             rotateXMatrix[0, 3] = 0.0;
             rotateXMatrix[1, 0] = 0.0;

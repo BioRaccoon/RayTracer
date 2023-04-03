@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RayTracer.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
@@ -52,6 +53,9 @@ namespace RayTracer.Model
         override
         public bool intersect(Ray ray, Hit hit)
         {
+
+            ray.Origin = StaticFunctions.ConvertPointToObjectCoordinates(ray.Origin, CompositeMatrix);
+            ray.Direction = StaticFunctions.ConvertVectorToObjectCoordinates(ray.Origin, CompositeMatrix);
 
             Vector3 boxMin = firstVextex;
             Vector3 boxMax = secondVextex;
@@ -131,6 +135,12 @@ namespace RayTracer.Model
 
             Vector3 intersectionPoint = ray.Direction.ScalarMultiplication(tNear).Add(ray.Origin);
 
+            /////////////////////////////////////////////
+            intersectionPoint = StaticFunctions.ConvertPointToWorldCoordinates(intersectionPoint, CompositeMatrix);
+            /////////////////////////////////////////////
+
+            //intersectionPoint = StaticFunctions.ConvertPointToWorldCoordinates(intersectionPoint, CompositeMatrix);
+
             hit.Found = true;
             hit.TotalDistance = tNear;
             if (hit.TotalDistance < hit.FoundDistance)
@@ -139,6 +149,7 @@ namespace RayTracer.Model
             }
             hit.IntersectionPoint = intersectionPoint;
             hit.NormalVector = checkWhichBoxFaceWasHit(tNear, txmin, txmax, tymin, tymax, tzmin, tzmax);
+            hit.NormalVector = StaticFunctions.ConvertObjectNormalToWorldCoordinates(hit.NormalVector, CompositeMatrix);
 
             return true;
         }

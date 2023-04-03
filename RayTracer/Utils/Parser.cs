@@ -101,16 +101,19 @@ namespace RayTracer.Utils
                 colorRedValue = double.TryParse(stringImageColor3[0].Replace(',', '.'), out colorRedValue) ? colorRedValue : double.Parse(stringImageColor3[0].Replace(".", ","));
                 colorGreenValue = double.TryParse(stringImageColor3[1].Replace(',', '.'), out colorGreenValue) ? colorGreenValue : double.Parse(stringImageColor3[1].Replace(".", ","));
                 colorBlueValue = double.TryParse(stringImageColor3[2].Replace(',', '.'), out colorBlueValue) ? colorBlueValue : double.Parse(stringImageColor3[2].Replace(".", ","));
-                /*if (!double.TryParse(redValue, out colorRedValue))
-                {
-                    colorRedValue = double.Parse(redValue.Replace(".", ","));
-                }*/
                 image = new Image(int.Parse(widthHeight[0]), int.Parse(widthHeight[1]), 
                     new Color3(colorRedValue, colorGreenValue, colorBlueValue));
             }
-            /*foreach (string transformationString in transformations)
+            foreach (string transformationString in transformations)
             {
-            }*/
+                List<string> types = new List<string>();
+                string[] typesArray = transformationString.Split('\n');
+                foreach (string type in typesArray)
+                {
+                    if (type.Length > 0 || type != "") types.Add(type);
+                }
+                transformationsList.Add(new Transformation(types));
+            }
             foreach (string cameraString in cameras)
             {
                 string[] cameraTemp = cameraString.Split('\n');
@@ -270,11 +273,23 @@ namespace RayTracer.Utils
                 "Dimensions: " + image.Width + "x" + image.Height + "\n" + 
                 "R: " + image.BackgroundColor.Red + " G: " + image.BackgroundColor.Green + " B: " + image.BackgroundColor.Blue);
             Console.WriteLine("---------------------------------------------------------");
-            /*Console.WriteLine("#######################################");
+            Console.WriteLine("#######################################");
             foreach (Transformation transformation in transformationsList)
             {
-                Console.WriteLine("Transformation: \n" + transformation);
-            }*/
+                Console.WriteLine("Transformation: \n" + 
+                    "Index: " + transformationsList.IndexOf(transformation) + "\n");
+                if (transformation.types.Count == 0)
+                {
+                    Console.WriteLine("This tranformation has no types!");
+                }
+                else
+                {
+                    foreach (string type in transformation.types)
+                    {
+                        Console.WriteLine("Type: " + type + "\n");
+                    }
+                }
+            }
             Console.WriteLine("#######################################");
             Console.WriteLine("---------------------------------------------------------");
             Console.WriteLine("Camera: \n" + 

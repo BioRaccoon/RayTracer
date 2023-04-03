@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RayTracer.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -46,6 +47,13 @@ namespace RayTracer.Model
             double β; // 0 < β < 1
             double γ; // 0 < γ < 1
 
+            //FirstVertex = StaticFunctions.ConvertPointToWorldCoordinates(FirstVertex, CompositeMatrix);
+            //SecondVertex = StaticFunctions.ConvertPointToWorldCoordinates(SecondVertex, CompositeMatrix);
+            //ThirdVertex = StaticFunctions.ConvertPointToWorldCoordinates(ThirdVertex, CompositeMatrix);
+
+            ray.Origin = StaticFunctions.ConvertPointToObjectCoordinates(ray.Origin, CompositeMatrix);
+            ray.Direction = StaticFunctions.ConvertVectorToObjectCoordinates(ray.Origin, CompositeMatrix);
+
             // α + β + γ = 1
 
             double[,] A = new double[3, 3]
@@ -57,8 +65,6 @@ namespace RayTracer.Model
             { {FirstVertex.XValue - ray.Origin.XValue, FirstVertex.XValue - ThirdVertex.XValue, ray.Direction.XValue},
               {FirstVertex.YValue - ray.Origin.YValue, FirstVertex.YValue - ThirdVertex.YValue, ray.Direction.YValue},
               {FirstVertex.ZValue - ray.Origin.ZValue, FirstVertex.ZValue - ThirdVertex.ZValue, ray.Direction.ZValue}};
-
-            double lol = matrixDeterminant(A);
 
             β = matrixDeterminant(matrixToCalcBeta) / matrixDeterminant(A);
 
@@ -88,6 +94,11 @@ namespace RayTracer.Model
             Vector3 intersectionPoint = (SecondVertex.Subtract(FirstVertex).ScalarMultiplication(β).Add(FirstVertex)).Add
                 (ThirdVertex.Subtract(FirstVertex).ScalarMultiplication(γ));
 
+            /////////////////////////////////////////////////////
+            // P = T P’
+            intersectionPoint = StaticFunctions.ConvertPointToWorldCoordinates(intersectionPoint, CompositeMatrix);
+            /////////////////////////////////////////////////////
+
             Vector3 rayOriginToIntersection = intersectionPoint.Subtract(ray.Origin);
 
             hit.TotalDistance = rayOriginToIntersection.Length();
@@ -95,6 +106,11 @@ namespace RayTracer.Model
             if (hit.TotalDistance <= ε) { return false; } // hit.t > ε -> intersection in front of ray
 
             if (hit.TotalDistance >= hit.FoundDistance) { return false; }// hit.t < hit.tmin -> closer intersection
+
+            /////////////////////////////////////////////////////
+            // N = (T-1)T N’
+            Normal = StaticFunctions.ConvertObjectNormalToWorldCoordinates(Normal, CompositeMatrix);
+            /////////////////////////////////////////////////////
 
             hit.FoundDistance = hit.TotalDistance;
             hit.Found = true;

@@ -26,6 +26,7 @@ namespace RayTracer
         List<List<Triangle>> triangles;
         List<Sphere> spheres;
         List<Box> boxes;
+        List<Object3D> sceneObjects;
 
         bool fileLoaded = false;
 
@@ -45,14 +46,25 @@ namespace RayTracer
             {
                 fillFormFields();
                 calculateTrianglesNormalVectors();
-                foreach (Material material in materials)
+                convertToObject3DList();
+                generateGeometricTransformations();
+                /*foreach (Material material in materials)
                 {
                     Console.WriteLine("Index - " + materials.IndexOf(material) + " ||||| " + material.Color.toString());
-                }
+                }*/
 
                 fileLoaded = true;
                 startRenderBtn.Enabled = true;
                 backgroundColorBtn.Enabled = true;
+            }
+        }
+
+        private void generateGeometricTransformations()
+        {
+            camera.GeometricTransformations(transformations);
+            foreach (Object3D object3 in sceneObjects)
+            {
+                object3.GeometricTransformations(transformations, camera);
             }
         }
 
@@ -68,7 +80,7 @@ namespace RayTracer
         {
             vectorOperationsController = new VectorOperationsController();
 
-            Console.WriteLine("############################################### Calculanting Normals ###############################################");
+            //Console.WriteLine("############################################### Calculanting Normals ###############################################");
 
             int loop = 1;
             foreach (List<Triangle> solidTriangles in triangles)
@@ -76,7 +88,7 @@ namespace RayTracer
                 Console.WriteLine(loop + "º solid has " + solidTriangles.Count + " triangles");
                 Console.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 vectorOperationsController.CalcNormals(solidTriangles);
-                foreach (Triangle triangle in solidTriangles)
+                /*foreach (Triangle triangle in solidTriangles)
                 {
                     Console.WriteLine("---------------------------------------------------------");
                     Console.WriteLine("Triangle: \n" +
@@ -89,7 +101,7 @@ namespace RayTracer
 
                     Console.WriteLine("---------------------------------------------------------");
                 }
-                Console.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                Console.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");*/
                 loop++;
             }
         }
@@ -147,15 +159,12 @@ namespace RayTracer
 
             // Generation and monitoring of the path of primary rays
 
-            Vector3 origin = new Vector3 (0, 0, camera.Distance);
+            Vector3 origin = new Vector3 (0, 0, 30);
+
             int Hres = image.Width;
             int Vres = image.Height;
 
             rayTracerPictBox.Image = new Bitmap(image.Width, image.Height);
-
-            sceneObjects = new List<Object3D>();
-
-            convertToObject3DList();
 
             Console.WriteLine("---------------------------------------------------------------------------------");
 
@@ -226,11 +235,10 @@ namespace RayTracer
 
         }
 
-        List<Object3D> sceneObjects;
-
         public void convertToObject3DList()
         {
-            foreach(Box box in boxes)
+            sceneObjects = new List<Object3D>();
+            foreach (Box box in boxes)
             {
                 sceneObjects.Add(box);
             }
@@ -258,14 +266,16 @@ namespace RayTracer
             double hitMin = 1.0E12;
             foreach (Object3D object3 in sceneObjects)
             { // ciclo para percorrer todos os objectos da cena
-                //if (object3 is Triangle || object3 is Box)
-                //{
-                    object3.intersect(ray, hit);
-                    if (hit.FoundDistance < hitMin)
-                    {
-                        hitMin = hit.FoundDistance;
-                        hit.MaterialHit = materials[object3.MaterialIndex];
-                    }
+              //if (object3 is Triangle || object3 is Box)
+              //{
+                ray.Origin = StaticFunctions.ConvertPointToWorldCoordinates(ray.Origin, object3.CompositeMatrix);
+                ray.Direction = StaticFunctions.ConvertVectorToWorldCoordinates(ray.Origin, object3.CompositeMatrix);
+                object3.intersect(ray, hit);
+                if (hit.FoundDistance < hitMin)
+                {
+                    hitMin = hit.FoundDistance;
+                    hit.MaterialHit = materials[object3.MaterialIndex];
+                }
                 //}
             }
 
