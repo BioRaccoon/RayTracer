@@ -62,6 +62,15 @@ namespace RayTracer.Model
             Transformation copy = new Transformation(trans.TransformationMatrix);
 
             CompositeMatrix = copy.MultiplyWithMatrix(CompositeMatrix);
+
+            /*double[,] mamamia = new double[4, 4] { 
+                { 4, -4, 0, 16 },
+            { 2, 2, 5, -8 },
+            { -3, -3, 3, -59 },
+            { 0, 0, 0, 1 }} ;
+
+           double [,] AAAAAA = copy.InvertMatrix(mamamia);*/
+
         }
 
         public abstract void toString();

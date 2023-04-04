@@ -20,6 +20,37 @@ namespace RayTracer.Model
             this.MaterialIndex = MaterialIndex;
         }
 
+        public bool intersects(Ray ray, Hit hit)
+        {
+
+            ray.Origin = StaticFunctions.ConvertPointToObjectCoordinates(ray.Origin, CompositeMatrix);
+            ray.Direction = StaticFunctions.ConvertVectorToObjectCoordinates(ray.Direction, CompositeMatrix);
+
+            Vector3 centerOrigin = ray.Origin.Subtract(sphereOrigin);
+
+            double RSquare = centerOrigin.DotProduct(centerOrigin);
+            double rSquare = sphereRadius * sphereRadius;
+
+            if (RSquare <= rSquare) { return false; }
+
+            // t=RO.D
+
+            double t = sphereOrigin.ScalarMultiplication(RSquare).DotProduct(ray.Direction);
+
+            if(t < -ε) { return false; }
+
+            // Pythagoras -> dSquare = RSquare - tSquare
+
+            double dSquare = RSquare - (t * t);
+
+            // if dSquare > rSquare -> no hit
+
+            if (dSquare > rSquare) { return false; }
+
+
+            return true;
+        }
+
         double ε = 1E-6;
 
         override
@@ -27,13 +58,17 @@ namespace RayTracer.Model
         {
 
             ray.Origin = StaticFunctions.ConvertPointToObjectCoordinates(ray.Origin, CompositeMatrix);
-            ray.Direction = StaticFunctions.ConvertVectorToObjectCoordinates(ray.Origin, CompositeMatrix);
+            ray.Direction = StaticFunctions.ConvertVectorToObjectCoordinates(ray.Direction, CompositeMatrix);
 
             double a = 1.0;
-            double b = (ray.Direction.ScalarMultiplication(2)).DotProduct(ray.Origin);
-            double c = (ray.Origin.DotProduct(ray.Origin))-(sphereRadius*sphereRadius);
+            double b = ray.Direction.ScalarMultiplication(2).DotProduct(ray.Origin);
+            double c = ray.Origin.DotProduct(ray.Origin) - (sphereRadius * sphereRadius);
 
-            double d = Math.Sqrt((b * b) - (4 * a * c));
+            double d = (b * b) - (4 * a * c);
+
+            if(d < 0) { return false; }
+
+            d = Math.Sqrt((b * b) - (4 * a * c));
 
             double t;
             double tPlus = (-b + d) / (2 * a);
@@ -58,16 +93,16 @@ namespace RayTracer.Model
 
             //double vNorma = calculateMagnitude(originIntersection);
 
-            if (hit.TotalDistance > ε && hit.TotalDistance < hit.FoundDistance)
+            if (hit.TotalDistance <= ε) { return false; }
+
+            hit.Found = true;
+            if (hit.TotalDistance < hit.FoundDistance)
             {
-
-                hit.Found = true;
                 hit.FoundDistance = hit.TotalDistance;
-                hit.IntersectionPoint = intersectionPoint;
-                hit.NormalVector = intersectionPoint.Subtract(sphereOrigin).Normalize();
-                hit.NormalVector = StaticFunctions.ConvertObjectNormalToWorldCoordinates(hit.NormalVector, CompositeMatrix);
-
             }
+            hit.IntersectionPoint = intersectionPoint;
+            hit.NormalVector = intersectionPoint.Subtract(sphereOrigin).Normalize();
+            hit.NormalVector = StaticFunctions.ConvertObjectNormalToWorldCoordinates(hit.NormalVector, CompositeMatrix);
 
             return true;
         }

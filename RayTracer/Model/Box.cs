@@ -55,7 +55,7 @@ namespace RayTracer.Model
         {
 
             ray.Origin = StaticFunctions.ConvertPointToObjectCoordinates(ray.Origin, CompositeMatrix);
-            ray.Direction = StaticFunctions.ConvertVectorToObjectCoordinates(ray.Origin, CompositeMatrix);
+            ray.Direction = StaticFunctions.ConvertVectorToObjectCoordinates(ray.Direction, CompositeMatrix);
 
             Vector3 boxMin = firstVextex;
             Vector3 boxMax = secondVextex;
@@ -138,8 +138,6 @@ namespace RayTracer.Model
             /////////////////////////////////////////////
             intersectionPoint = StaticFunctions.ConvertPointToWorldCoordinates(intersectionPoint, CompositeMatrix);
             /////////////////////////////////////////////
-
-            //intersectionPoint = StaticFunctions.ConvertPointToWorldCoordinates(intersectionPoint, CompositeMatrix);
 
             hit.Found = true;
             hit.TotalDistance = tNear;

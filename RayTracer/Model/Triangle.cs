@@ -45,14 +45,10 @@ namespace RayTracer.Model
         {
             double α; // 0 < α < 1
             double β; // 0 < β < 1
-            double γ; // 0 < γ < 1
-
-            //FirstVertex = StaticFunctions.ConvertPointToWorldCoordinates(FirstVertex, CompositeMatrix);
-            //SecondVertex = StaticFunctions.ConvertPointToWorldCoordinates(SecondVertex, CompositeMatrix);
-            //ThirdVertex = StaticFunctions.ConvertPointToWorldCoordinates(ThirdVertex, CompositeMatrix);
+            double γ; // 0 < γ < 1;
 
             ray.Origin = StaticFunctions.ConvertPointToObjectCoordinates(ray.Origin, CompositeMatrix);
-            ray.Direction = StaticFunctions.ConvertVectorToObjectCoordinates(ray.Origin, CompositeMatrix);
+            ray.Direction = StaticFunctions.ConvertVectorToObjectCoordinates(ray.Direction, CompositeMatrix);
 
             // α + β + γ = 1
 
@@ -82,7 +78,7 @@ namespace RayTracer.Model
             //if (γ <= 0.0) { return false; } // γ > 0.0 -> intersection
 
             if (γ <= -ε) { return false; } // γ > -ε -> intersection
-
+                
             //if (β + γ >= 1.0) { return false; } // β + γ < 1.0 -> intersection
 
             if (β + γ >= 1.0 + ε) { return false; } // β + γ < 1.0 + ε -> intersection
@@ -99,6 +95,9 @@ namespace RayTracer.Model
             intersectionPoint = StaticFunctions.ConvertPointToWorldCoordinates(intersectionPoint, CompositeMatrix);
             /////////////////////////////////////////////////////
 
+            ray.Origin = StaticFunctions.ConvertPointToWorldCoordinates(ray.Origin, CompositeMatrix);
+            ray.Direction = StaticFunctions.ConvertVectorToWorldCoordinates(ray.Direction, CompositeMatrix);
+
             Vector3 rayOriginToIntersection = intersectionPoint.Subtract(ray.Origin);
 
             hit.TotalDistance = rayOriginToIntersection.Length();
@@ -109,7 +108,7 @@ namespace RayTracer.Model
 
             /////////////////////////////////////////////////////
             // N = (T-1)T N’
-            Normal = StaticFunctions.ConvertObjectNormalToWorldCoordinates(Normal, CompositeMatrix);
+            //Normal = StaticFunctions.ConvertObjectNormalToWorldCoordinates(Normal, CompositeMatrix);
             /////////////////////////////////////////////////////
 
             hit.FoundDistance = hit.TotalDistance;
@@ -122,6 +121,7 @@ namespace RayTracer.Model
 
         public double matrixDeterminant(double[,] matrix)
         {
+
             return (matrix[0, 0] * matrix[1, 1] * matrix[2, 2]) +
                    (matrix[0, 1] * matrix[1, 2] * matrix[2, 0]) +
                    (matrix[0, 2] * matrix[1, 0] * matrix[2, 1]) -
