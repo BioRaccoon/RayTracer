@@ -189,7 +189,7 @@ namespace RayTracer
 
                     Ray ray = new Ray(origin, direction);
 
-                    if (i == 80 && j == 100) {
+                    if (i == 99 && j == 99) {
 
                         Console.WriteLine("sad");
                     }
@@ -273,7 +273,8 @@ namespace RayTracer
             { // ciclo para percorrer todos os objectos da cena
               //if (object3 is Sphere || object3 is Box)
               //{
-                object3.intersect(ray, hit);
+                Ray ray1 = new Ray(ray.Origin, ray.Direction);
+                object3.intersect(ray1, hit);
                 if (hit.FoundDistance < hitMin)
                 {
                     hitMin = hit.FoundDistance;

@@ -65,7 +65,13 @@ namespace RayTracer.Model
 
             /////////////////////// X axis ///////////////////////
 
+            ray.Origin = StaticFunctions.ConvertPointToWorldCoordinates(ray.Origin, CompositeMatrix);
+            ray.Direction = StaticFunctions.ConvertVectorToWorldCoordinates(ray.Direction, CompositeMatrix);
+
             if (!checkIfRayIsParallel(ray.Origin.XValue, ray.Direction.XValue, boxMin.XValue, boxMax.XValue)) return false;
+
+            ray.Origin = StaticFunctions.ConvertPointToObjectCoordinates(ray.Origin, CompositeMatrix);
+            ray.Direction = StaticFunctions.ConvertVectorToObjectCoordinates(ray.Direction, CompositeMatrix);
 
             double txmin = calculateIntersectionDistance(boxMin.XValue, ray.Origin.XValue, ray.Direction.XValue);
             double txmax = calculateIntersectionDistance(boxMax.XValue, ray.Origin.XValue, ray.Direction.XValue);
@@ -87,7 +93,13 @@ namespace RayTracer.Model
 
             /////////////////////// Y axis ///////////////////////
 
+            ray.Origin = StaticFunctions.ConvertPointToWorldCoordinates(ray.Origin, CompositeMatrix);
+            ray.Direction = StaticFunctions.ConvertVectorToWorldCoordinates(ray.Direction, CompositeMatrix);
+
             if (!checkIfRayIsParallel(ray.Origin.YValue, ray.Direction.YValue, boxMin.YValue, boxMax.YValue)) return false;
+
+            ray.Origin = StaticFunctions.ConvertPointToObjectCoordinates(ray.Origin, CompositeMatrix);
+            ray.Direction = StaticFunctions.ConvertVectorToObjectCoordinates(ray.Direction, CompositeMatrix);
 
             double tymin = calculateIntersectionDistance(boxMin.YValue, ray.Origin.YValue, ray.Direction.YValue);
             double tymax = calculateIntersectionDistance(boxMax.YValue, ray.Origin.YValue, ray.Direction.YValue);
@@ -111,7 +123,13 @@ namespace RayTracer.Model
 
             /////////////////////// Z axis ///////////////////////
 
+            ray.Origin = StaticFunctions.ConvertPointToWorldCoordinates(ray.Origin, CompositeMatrix);
+            ray.Direction = StaticFunctions.ConvertVectorToWorldCoordinates(ray.Direction, CompositeMatrix);
+
             if (!checkIfRayIsParallel(ray.Origin.ZValue, ray.Direction.ZValue, boxMin.ZValue, boxMax.ZValue)) return false;
+
+            ray.Origin = StaticFunctions.ConvertPointToObjectCoordinates(ray.Origin, CompositeMatrix);
+            ray.Direction = StaticFunctions.ConvertVectorToObjectCoordinates(ray.Direction, CompositeMatrix);
 
             double tzmin = calculateIntersectionDistance(boxMin.ZValue, ray.Origin.ZValue, ray.Direction.ZValue);
             double tzmax = calculateIntersectionDistance(boxMax.ZValue, ray.Origin.ZValue, ray.Direction.ZValue);
