@@ -108,7 +108,7 @@ namespace RayTracer.Model
 
             /////////////////////////////////////////////////////
             // N = (T-1)T N’
-            //Normal = StaticFunctions.ConvertObjectNormalToWorldCoordinates(Normal, CompositeMatrix);
+            Normal = StaticFunctions.ConvertObjectNormalToWorldCoordinates(Normal, CompositeMatrix);
             /////////////////////////////////////////////////////
 
             hit.FoundDistance = hit.TotalDistance;

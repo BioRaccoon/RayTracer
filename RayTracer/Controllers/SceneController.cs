@@ -189,11 +189,6 @@ namespace RayTracer
 
                     Ray ray = new Ray(origin, direction);
 
-                    if (i == 99 && j == 99) {
-
-                        Console.WriteLine("sad");
-                    }
-
                     Color3 color = traceRay(ray, int.Parse(recursiveIndex.Text));
 
                     // Limitation of the primary components (R, G and B) of the colors obtained
@@ -271,16 +266,16 @@ namespace RayTracer
             double hitMin = 1.0E12;
             foreach (Object3D object3 in sceneObjects)
             { // ciclo para percorrer todos os objectos da cena
-              //if (object3 is Sphere || object3 is Box)
+              //if (object3 is Sphere || object3 is Triangle)
               //{
-                Ray ray1 = new Ray(ray.Origin, ray.Direction);
-                object3.intersect(ray1, hit);
+                Ray rayCopy = new Ray(ray.Origin, ray.Direction);
+                object3.intersect(rayCopy, hit);
                 if (hit.FoundDistance < hitMin)
                 {
                     hitMin = hit.FoundDistance;
                     hit.MaterialHit = materials[object3.MaterialIndex];
                 }
-                //}
+              //}
             }
 
             if (hit.Found)

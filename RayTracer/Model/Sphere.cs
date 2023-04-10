@@ -58,9 +58,11 @@ namespace RayTracer.Model
 
             intersectionPoint = StaticFunctions.ConvertPointToWorldCoordinates(intersectionPoint, CompositeMatrix);
 
-            //Vector3 originIntersection = intersectionPoint.Subtract(ray.Origin);
-
-            //double vNorma = calculateMagnitude(originIntersection);
+            // calcular a distância hit.distance (hit.t)
+            // do ponto de interseção à origem do raio
+            Vector3 originIntersection = intersectionPoint.Subtract(ray.Origin);
+            double vNorma = calculateMagnitude(originIntersection);
+            hit.TotalDistance = vNorma;
 
             if (hit.TotalDistance <= ε) { return false; }
 

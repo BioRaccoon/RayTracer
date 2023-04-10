@@ -63,33 +63,6 @@ namespace RayTracer.Model
 
             CompositeMatrix = copy.MultiplyWithMatrix(CompositeMatrix);
 
-            double[,] mamamia = new double[3, 3] { 
-                { 8,
-99.301136384401332,
-0.12331420466224388 },
-            { 0,
-19.333465438440257,
--0.89769511244927858 },
-            {  0,
--28.707481841757051,
--0.42300956491927666}} ;
-
-            double[,] mama = new double[3, 3] {
-                { 8,
-8,
-0.12331420466224388     },
-            { 0,
-8,
--0.89769511244927858     },
-            { 0,
-0,
--0.42300956491927666    }};
-
-            double AAAAAA = matrixDeterminant(mamamia);
-            double ad = matrixDeterminant(mama);
-
-            double lol = AAAAAA/ad;
-
         }
 
         public double matrixDeterminant(double[,] matrix)
