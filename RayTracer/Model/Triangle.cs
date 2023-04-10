@@ -90,36 +90,39 @@ namespace RayTracer.Model
             Vector3 intersectionPoint = (SecondVertex.Subtract(FirstVertex).ScalarMultiplication(β).Add(FirstVertex)).Add
                 (ThirdVertex.Subtract(FirstVertex).ScalarMultiplication(γ));
 
-            /////////////////////////////////////////////////////
+            Vector3 rayOriginToIntersection = intersectionPoint.Subtract(ray.Origin);
+            hit.TotalDistance = rayOriginToIntersection.Length();
+
+            hit.IntersectionPoint = intersectionPoint;
+
             // P = T P’
-            intersectionPoint = StaticFunctions.ConvertPointToWorldCoordinates(intersectionPoint, CompositeMatrix);
-            /////////////////////////////////////////////////////
+            hit.IntersectionPoint = StaticFunctions.ConvertPointToWorldCoordinates(hit.IntersectionPoint, CompositeMatrix);
 
             ray.Origin = StaticFunctions.ConvertPointToWorldCoordinates(ray.Origin, CompositeMatrix);
             ray.Direction = StaticFunctions.ConvertVectorToWorldCoordinates(ray.Direction, CompositeMatrix);
 
-            Vector3 rayOriginToIntersection = intersectionPoint.Subtract(ray.Origin);
-
-            hit.TotalDistance = rayOriginToIntersection.Length();
+            rayOriginToIntersection = hit.IntersectionPoint.Subtract(ray.Origin);
+            hit.TotalDistance = calculateMagnitude(rayOriginToIntersection);
 
             if (hit.TotalDistance <= ε) { return false; } // hit.t > ε -> intersection in front of ray
 
             if (hit.TotalDistance >= hit.FoundDistance) { return false; }// hit.t < hit.tmin -> closer intersection
 
-            /////////////////////////////////////////////////////
-            // N = (T-1)T N’
-            Normal = StaticFunctions.ConvertObjectNormalToWorldCoordinates(Normal, CompositeMatrix);
-            /////////////////////////////////////////////////////
-
             hit.FoundDistance = hit.TotalDistance;
             hit.Found = true;
             hit.IntersectionPoint = intersectionPoint;
-            hit.NormalVector = Normal;
+            // N = (T-1)T N’
+            hit.NormalVector = StaticFunctions.ConvertObjectNormalToWorldCoordinates(Normal, CompositeMatrix); 
 
             return true;
         }
 
-        public double matrixDeterminant(double[,] matrix)
+        public static double calculateMagnitude(Vector3 vector)
+        {
+            return Math.Sqrt(vector.XValue * vector.XValue + vector.YValue * vector.YValue + vector.ZValue * vector.ZValue);
+        }
+
+        public new double matrixDeterminant(double[,] matrix)
         {
 
             return (matrix[0, 0] * matrix[1, 1] * matrix[2, 2]) +
