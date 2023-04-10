@@ -62,6 +62,10 @@ namespace RayTracer
         private void generateGeometricTransformations()
         {
             camera.GeometricTransformations(transformations);
+            foreach (LightSource light in lights)
+            {
+                light.GeometricTransformations(transformations, camera);
+            }
             foreach (Object3D object3 in sceneObjects)
             {
                 object3.GeometricTransformations(transformations, camera);

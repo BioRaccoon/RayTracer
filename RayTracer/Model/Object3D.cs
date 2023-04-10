@@ -54,26 +54,12 @@ namespace RayTracer.Model
                 }
             }
 
-            // Swap Composite Matrixes to do T1 (Camera) * T2 (Object3D) instead of T2 * T1 because T1*T2 != T2*T1
-            //transformation.TransformationMatrix = camera.CompositeMatrix;
-
             Transformation trans = transformations[camera.TransformationIndex];
 
             Transformation copy = new Transformation(trans.TransformationMatrix);
 
             CompositeMatrix = copy.MultiplyWithMatrix(CompositeMatrix);
 
-        }
-
-        public double matrixDeterminant(double[,] matrix)
-        {
-
-            return (matrix[0, 0] * matrix[1, 1] * matrix[2, 2]) +
-                   (matrix[0, 1] * matrix[1, 2] * matrix[2, 0]) +
-                   (matrix[0, 2] * matrix[1, 0] * matrix[2, 1]) -
-                   (matrix[0, 2] * matrix[1, 1] * matrix[2, 0]) -
-                   (matrix[0, 1] * matrix[1, 0] * matrix[2, 2]) -
-                   (matrix[0, 0] * matrix[1, 2] * matrix[2, 1]);
         }
 
         public abstract void toString();
