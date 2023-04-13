@@ -123,7 +123,7 @@ namespace RayTracer.Model
             return Math.Sqrt(vector.XValue * vector.XValue + vector.YValue * vector.YValue + vector.ZValue * vector.ZValue);
         }*/
 
-        public new double matrixDeterminant(double[,] matrix)
+        public double matrixDeterminant(double[,] matrix)
         {
 
             return (matrix[0, 0] * matrix[1, 1] * matrix[2, 2]) +
