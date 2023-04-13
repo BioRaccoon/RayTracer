@@ -80,22 +80,7 @@ namespace RayTracer.Model
 
         public double[,] MultiplyWithMatrix(double[,] matrixA) // multiplica duas matrizes 4 x 4
         {
-            //if (matrixA.GetLength(1) != 4) throw new Exception("The array length must be 4.");
-        /*int i, j, k;
-        double [,] matrixB = new double[4,4];
-
-        for (i = 0; i < 4; i++)
-            for (j = 0; j < 4; j++)
-            {
-                matrixB[i,j] = TransformationMatrix[i,j];
-                TransformationMatrix[i,j] = 0.0;
-            }
-        for (i = 0; i < 4; i++)
-            for (j = 0; j < 4; j++)
-                for (k = 0; k < 4; k++)
-                    TransformationMatrix[i,j] += matrixB[i,k] * matrixA[k,j];
-
-        return TransformationMatrix; */
+            if (matrixA.GetLength(1) != 4) throw new Exception("The array length must be 4.");
 
             int i, j, k;
             double[,] matrixB = new double[4, 4];
@@ -122,31 +107,6 @@ namespace RayTracer.Model
             return result;
 
         }
-
-        /*
-
-         public double[,] MultiplyWithMatrix(double[,] matrixA)
-    {
-        if (matrixA.GetLength(1) != 4) throw new Exception("The array length must be 4.");
-        int i, j, k;
-        double[,] matrixB = new double[4, 4];
-        double[,] result = new double[4, 4];
-
-        for (i = 0; i < 4; i++)
-            for (j = 0; j < 4; j++)
-            {
-                matrixB[i, j] = TransformationMatrix[i, j];
-                result[i, j] = 0.0;
-            }
-        for (i = 0; i < 4; i++)
-            for (j = 0; j < 4; j++)
-                for (k = 0; k < 4; k++)
-                    result[i, j] += matrixB[i, k] * matrixA[k, j];
-        return result;
-
-    }
-
-        */
 
 
         public double[,] Translate(double x, double y, double z)

@@ -83,7 +83,7 @@ namespace RayTracer.Model
 
             if (β + γ >= 1.0 + ε) { return false; } // β + γ < 1.0 + ε -> intersection
 
-            α = 1.0 - β - γ;
+            // α = 1.0 - β - γ; não é necessário calcular
 
             // P’ = a + β * (b - a) + γ * (c - a)
 
