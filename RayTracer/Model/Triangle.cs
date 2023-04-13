@@ -90,18 +90,12 @@ namespace RayTracer.Model
             Vector3 intersectionPoint = (SecondVertex.Subtract(FirstVertex).ScalarMultiplication(β).Add(FirstVertex)).Add
                 (ThirdVertex.Subtract(FirstVertex).ScalarMultiplication(γ));
 
-            Vector3 rayOriginToIntersection = intersectionPoint.Subtract(ray.Origin);
-            hit.TotalDistance = rayOriginToIntersection.Length();
-
-            hit.IntersectionPoint = intersectionPoint;
-
             // P = T P’
-            hit.IntersectionPoint = StaticFunctions.ConvertPointToWorldCoordinates(hit.IntersectionPoint, CompositeMatrix);
-
+            intersectionPoint = StaticFunctions.ConvertPointToWorldCoordinates(intersectionPoint, CompositeMatrix);
             ray.Origin = StaticFunctions.ConvertPointToWorldCoordinates(ray.Origin, CompositeMatrix);
             ray.Direction = StaticFunctions.ConvertVectorToWorldCoordinates(ray.Direction, CompositeMatrix);
 
-            rayOriginToIntersection = hit.IntersectionPoint.Subtract(ray.Origin);
+            Vector3 rayOriginToIntersection = intersectionPoint.Subtract(ray.Origin);
             hit.TotalDistance = rayOriginToIntersection.Length();
 
             if (hit.TotalDistance <= ε) { return false; } // hit.t > ε -> intersection in front of ray
@@ -110,6 +104,7 @@ namespace RayTracer.Model
 
             hit.MinDistance = hit.TotalDistance;
             hit.Found = true;
+            hit.IntersectionPoint = intersectionPoint;
             // N = (T-1)T N’
             hit.NormalVector = StaticFunctions.ConvertObjectNormalToWorldCoordinates(Normal, CompositeMatrix); 
             //hit.NormalVector = Normal;

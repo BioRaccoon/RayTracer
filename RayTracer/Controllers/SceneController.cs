@@ -268,7 +268,7 @@ namespace RayTracer
 
         double ε = 1E-6;
 
-        Color3 traceRay(Ray ray, int recursiveIndex)
+        Color3 traceRays(Ray ray, int recursiveIndex)
         {
             Hit hit = new Hit();
             hit.Found = false; // inicialização; também pode ser realizada no construtor da classe Hit
@@ -353,7 +353,7 @@ namespace RayTracer
             }
         }
 
-        Color3 traceRays(Ray ray, int recursiveIndex)
+        Color3 traceRay(Ray ray, int recursiveIndex)
         {
             Hit hit = new Hit();
             hit.Found = false; // inicialização; também pode ser realizada no construtor da classe Hit

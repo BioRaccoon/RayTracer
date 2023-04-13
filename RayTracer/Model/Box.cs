@@ -81,7 +81,7 @@ namespace RayTracer.Model
 
             if (txmax < tFar) tFar = txmax;
 
-            if(tNear > tFar) return false; // box is missed
+            if (tNear > tFar) return false; // box is missed
 
             if (tFar < 0) return false; // box is behind
 
@@ -137,24 +137,24 @@ namespace RayTracer.Model
             // P(t) = R + tNear * D
             Vector3 intersectionPoint = ray.Direction.ScalarMultiplication(tNear).Add(ray.Origin);
 
-            hit.Found = true;
             hit.TotalDistance = tNear;
+            hit.Found = true;
 
-            hit.IntersectionPoint = intersectionPoint;
-            hit.NormalVector = checkWhichBoxFaceWasHit(tNear, txmin, txmax, tymin, tymax, tzmin, tzmax);
-            hit.NormalVector = StaticFunctions.ConvertObjectNormalToWorldCoordinates(hit.NormalVector, CompositeMatrix);
-
-            hit.IntersectionPoint = StaticFunctions.ConvertPointToWorldCoordinates(hit.IntersectionPoint, CompositeMatrix);
+            intersectionPoint = StaticFunctions.ConvertPointToWorldCoordinates(intersectionPoint, CompositeMatrix);
             ray.Origin = StaticFunctions.ConvertPointToWorldCoordinates(ray.Origin, CompositeMatrix);
             ray.Direction = StaticFunctions.ConvertVectorToWorldCoordinates(ray.Direction, CompositeMatrix);
 
-            Vector3 rayOriginToIntersection = hit.IntersectionPoint.Subtract(ray.Origin);
+            Vector3 rayOriginToIntersection = intersectionPoint.Subtract(ray.Origin);
             hit.TotalDistance = rayOriginToIntersection.Length();
 
             if (hit.TotalDistance < hit.MinDistance)
             {
                 hit.MinDistance = hit.TotalDistance;
             }
+
+            hit.IntersectionPoint = intersectionPoint;
+            hit.NormalVector = checkWhichBoxFaceWasHit(tNear, txmin, txmax, tymin, tymax, tzmin, tzmax);
+            hit.NormalVector = StaticFunctions.ConvertObjectNormalToWorldCoordinates(hit.NormalVector, CompositeMatrix);
 
             return true;
         }
