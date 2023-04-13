@@ -268,7 +268,7 @@ namespace RayTracer
 
         double ε = 1E-6;
 
-        Color3 traceRay(Ray ray, int recursiveIndex)
+        Color3 traceRays(Ray ray, int recursiveIndex)
         {
             Hit hit = new Hit();
             hit.Found = false; // inicialização; também pode ser realizada no construtor da classe Hit
@@ -299,6 +299,7 @@ namespace RayTracer
                     // cálculo da componente de reflexão difusa com origem na fonte de luz light
                     // comecem por construir o vector l que une o ponto de intersecção ao ponto correspondente à posição da fonte de luz light
                     Vector3 l = new Vector3(light.Position.Subtract(hit.IntersectionPoint));
+                    // Vector3 l = new Vector3(hit.IntersectionPoint.Subtract(light.Position));
                     // antes de normalizar o vector l, calculem o seu comprimento
                     double tLight = l.Length();
                     // normalizem o vector l
@@ -321,7 +322,6 @@ namespace RayTracer
                         foreach (Object3D sceneObject in sceneObjects)
                         {
                             sceneObject.intersect(shadowRay, shadowHit);
-
                             // há sombra, pois o raio shadowRay intersecta um
                             // (basta um) objecto da cena, a distância shadowHit.t do ponto de
                             // intersecção à origem do raio é shadowHit.t > 0.0 (pois a intersecção terá
@@ -331,11 +331,9 @@ namespace RayTracer
                             // a precisão de cálculo ser limitada, a intersecção só deverá ser reportada
                             // quando a distância shadowHit.t do ponto de intersecção à origem do raio
                             // for shadowHit.t > ε e não shadowHit.t > 0.0 (documento “TR - 05.pdf”, págs. 14 a 17)
-
                             if (shadowHit.Found) break;
                             // encontrada que está uma obstrução à passagem da luz proveniente da fonte light,
                             // não há necessidade de percorrer os restantes objectos da cena
-
                         }
                         // atentem na negação “!” da condição; se o ponto estiver exposto à luz proveniente da fonte light,
                         // calculem a componente de reflexão difusa e adicionem a cor resultante à cor color
@@ -344,7 +342,7 @@ namespace RayTracer
                             // color = color + light.color * hit.material.color * hit.material.diffuseCoefficient * cosTheta;
                             color = color.add(light.Intensity.multiply(hit.MaterialHit.Color).multiplyScalar(hit.MaterialHit.DifuseLight).multiplyScalar(cosTheta)).CheckRange();
                         }
-                        }
+                    }
                 }
                 return color.divideScalar(sceneLights.Count); // em que sceneLights.length designa o número de fontes de luz existentes na cena; se houver intersecção, retorna a cor correspondente à componente de luz ambiente reflectida pelo objecto intersectado mais próximo da origem do raio
 
@@ -355,7 +353,7 @@ namespace RayTracer
             }
         }
 
-        Color3 traceRays(Ray ray, int recursiveIndex)
+        Color3 traceRay(Ray ray, int recursiveIndex)
         {
             Hit hit = new Hit();
             hit.Found = false; // inicialização; também pode ser realizada no construtor da classe Hit

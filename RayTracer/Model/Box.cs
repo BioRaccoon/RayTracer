@@ -139,6 +139,8 @@ namespace RayTracer.Model
 
             hit.TotalDistance = tNear;
 
+            hit.NormalVector = checkWhichBoxFaceWasHit(intersectionPoint, tNear, txmin, txmax, tymin, tymax, tzmin, tzmax);
+
             intersectionPoint = StaticFunctions.ConvertPointToWorldCoordinates(intersectionPoint, CompositeMatrix);
             ray.Origin = StaticFunctions.ConvertPointToWorldCoordinates(ray.Origin, CompositeMatrix);
             ray.Direction = StaticFunctions.ConvertVectorToWorldCoordinates(ray.Direction, CompositeMatrix);
@@ -153,7 +155,6 @@ namespace RayTracer.Model
 
             hit.Found = true;
             hit.IntersectionPoint = intersectionPoint;
-            hit.NormalVector = checkWhichBoxFaceWasHit(tNear, txmin, txmax, tymin, tymax, tzmin, tzmax);
             hit.NormalVector = StaticFunctions.ConvertObjectNormalToWorldCoordinates(hit.NormalVector, CompositeMatrix);
 
             return true;
@@ -164,36 +165,36 @@ namespace RayTracer.Model
             return Math.Sqrt(vector.XValue * vector.XValue + vector.YValue * vector.YValue + vector.ZValue * vector.ZValue);
         }*/
 
-        public Vector3 checkWhichBoxFaceWasHit(double tNear, double txmin, double txmax, double tymin, double tymax, double tzmin, double tzmax)
+        public Vector3 checkWhichBoxFaceWasHit(Vector3 intersectionPoint, double tNear, double txmin, double txmax, double tymin, double tymax, double tzmin, double tzmax)
         {
 
             // Check which face was hit
-            if (tNear == txmin)
+            if (Math.Abs(intersectionPoint.XValue + 0.5)<1.0E-3)
             {
                 // Front face was hit
                 return new Vector3(-1, 0, 0);
             }
-            else if (tNear == txmax)
+            else if (Math.Abs(intersectionPoint.XValue - 0.5) < 1.0E-3)
             {
                 // Back face was hit
                 return new Vector3(1, 0, 0);
             }
-            else if (tNear == tymin)
+            else if (Math.Abs(intersectionPoint.YValue + 0.5) < 1.0E-3)
             {
                 // Bottom face was hit
                 return new Vector3(0, -1, 0);
             }
-            else if (tNear == tymax)
+            else if (Math.Abs(intersectionPoint.YValue - 0.5) < 1.0E-3)
             {
                 // Top face was hit
                 return new Vector3(0, 1, 0);
             }
-            else if (tNear == tzmin)
+            else if (Math.Abs(intersectionPoint.ZValue + 0.5) < 1.0E-3)
             {
                 // Left face was hit
                 return new Vector3(0, 0, -1);
             }
-            else if (tNear == tzmax)
+            else if (Math.Abs(intersectionPoint.ZValue - 0.5) < 1.0E-3)
             {
                 // Right face was hit
                 return new Vector3(0, 0, 1);
