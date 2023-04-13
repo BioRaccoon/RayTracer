@@ -149,7 +149,9 @@ namespace RayTracer.Model
             ray.Direction = StaticFunctions.ConvertVectorToWorldCoordinates(ray.Direction, CompositeMatrix);
 
             Vector3 rayOriginToIntersection = hit.IntersectionPoint.Subtract(ray.Origin);
-            hit.TotalDistance = calculateMagnitude(rayOriginToIntersection);
+            hit.TotalDistance = rayOriginToIntersection.Length();
+
+            //hit.IntersectionPoint = intersectionPoint;
 
             if (hit.TotalDistance < hit.FoundDistance)
             {
@@ -159,10 +161,10 @@ namespace RayTracer.Model
             return true;
         }
 
-        public static double calculateMagnitude(Vector3 vector)
+        /*public static double calculateMagnitude(Vector3 vector)
         {
             return Math.Sqrt(vector.XValue * vector.XValue + vector.YValue * vector.YValue + vector.ZValue * vector.ZValue);
-        }
+        }*/
 
         public Vector3 checkWhichBoxFaceWasHit(double tNear, double txmin, double txmax, double tymin, double tymax, double tzmin, double tzmax)
         {

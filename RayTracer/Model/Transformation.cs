@@ -66,6 +66,18 @@ namespace RayTracer.Model
             return pointBMatrix;
         }
 
+        public static double[] multiply1andReturn(double[] dir, double[,] matrix)
+        {
+            double[] result = new double[4];
+            int i, j;
+
+            for (i = 0; i < 4; i++)
+                for (j = 0; j < 4; j++)
+                    result[i] += matrix[i, j] * dir[j];
+
+            return result;
+        }
+
         public double[,] MultiplyWithMatrix(double[,] matrixA) // multiplica duas matrizes 4 x 4
         {
             //if (matrixA.GetLength(1) != 4) throw new Exception("The array length must be 4.");

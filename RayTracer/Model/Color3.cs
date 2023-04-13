@@ -53,5 +53,25 @@ namespace RayTracer.Model
             return Red+","+Green+","+Blue;
         }
 
+        public Color3 multiply(Color3 colorToMultiplyBy)
+        {
+            return new Color3(Red * colorToMultiplyBy.Red, Green * colorToMultiplyBy.Green, Blue * colorToMultiplyBy.Blue);
+        }
+
+        public Color3 multiplyScalar(double scalar)
+        {
+            return new Color3(Red * scalar, Green * scalar, Blue * scalar);
+        }
+
+        public Color3 add(Color3 colorToAdd)
+        {
+            return new Color3(Red + colorToAdd.Red, Green + colorToAdd.Green, Blue + colorToAdd.Blue).CheckRange();
+        }
+
+        public Color3 divideScalar(int scalar)
+        {
+            if (scalar == 0) return this;
+            return new Color3(Red / scalar, Green / scalar, Blue / scalar).CheckRange();
+        }
     }
 }

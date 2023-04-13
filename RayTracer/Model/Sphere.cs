@@ -29,9 +29,13 @@ namespace RayTracer.Model
             ray.Origin = StaticFunctions.ConvertPointToObjectCoordinates(ray.Origin, CompositeMatrix);
             ray.Direction = StaticFunctions.ConvertVectorToObjectCoordinates(ray.Direction, CompositeMatrix);
 
+            Vector3 raySphereOrigin = sphereOrigin.Subtract(ray.Origin);
+
             double a = 1.0;
             double b = ray.Direction.ScalarMultiplication(2).DotProduct(ray.Origin);
+            //double b = ray.Direction.ScalarMultiplication(2).DotProduct(raySphereOrigin);
             double c = ray.Origin.DotProduct(ray.Origin) - (sphereRadius * sphereRadius);
+            //double c = raySphereOrigin.DotProduct(raySphereOrigin) - (sphereRadius * sphereRadius);
 
             double d = (b * b) - (4 * a * c);
 
@@ -64,17 +68,18 @@ namespace RayTracer.Model
             // calcular a distância hit.distance (hit.t)
             // do ponto de interseção à origem do raio
             Vector3 originIntersection = hit.IntersectionPoint.Subtract(ray.Origin);
-            double vNorma = calculateMagnitude(originIntersection);
-            hit.TotalDistance = vNorma;
+            hit.TotalDistance = originIntersection.Length();
 
             if (hit.TotalDistance <= ε) { return false; }
 
+            if (hit.TotalDistance >= hit.FoundDistance) { return false; }
+
             hit.Found = true;
-            if (hit.TotalDistance < hit.FoundDistance)
-            {
+            //if (hit.TotalDistance < hit.FoundDistance)
+            //{
                 hit.FoundDistance = hit.TotalDistance;
-            }
-            hit.IntersectionPoint = intersectionPoint;
+            //}
+            //hit.IntersectionPoint = intersectionPoint;
             hit.NormalVector = intersectionPoint.Subtract(sphereOrigin).Normalize();
             hit.NormalVector = StaticFunctions.ConvertObjectNormalToWorldCoordinates(hit.NormalVector, CompositeMatrix);
 
@@ -82,10 +87,10 @@ namespace RayTracer.Model
         }
 
         //vector norm
-        public static double calculateMagnitude(Vector3 vector)
+        /*public static double calculateMagnitude(Vector3 vector)
         {
             return Math.Sqrt(vector.XValue * vector.XValue + vector.YValue * vector.YValue + vector.ZValue * vector.ZValue);
-        }
+        }*/
 
         public double Distance(Vector3 point1, Vector3 point2)
         {

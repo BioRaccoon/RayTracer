@@ -2,9 +2,12 @@
 using RayTracer.Model;
 using RayTracer.Utils;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Runtime.ConstrainedExecution;
+using System.Security.Policy;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
@@ -21,7 +24,7 @@ namespace RayTracer
         Image image;
         Camera camera;
         List<Transformation> transformations;
-        List<LightSource> lights;
+        List<LightSource> sceneLights;
         List<Material> materials;
         List<List<Triangle>> triangles;
         List<Sphere> spheres;
@@ -62,7 +65,7 @@ namespace RayTracer
         private void generateGeometricTransformations()
         {
             camera.GeometricTransformations(transformations);
-            foreach (LightSource light in lights)
+            foreach (LightSource light in sceneLights)
             {
                 light.GeometricTransformations(transformations, camera);
             }
@@ -145,7 +148,7 @@ namespace RayTracer
                                              (rayTracerBox.Height / 2) - (rayTracerPictBox.Height / 2));
 
             transformations = parser.getTransformations();
-            lights = parser.getLights();
+            sceneLights = parser.getLights();
             materials = parser.getMaterials();
             triangles = parser.getTriangles();
             spheres = parser.getSphere();
@@ -262,6 +265,8 @@ namespace RayTracer
 
         }
 
+        double ε = 1E-6;
+
         Color3 traceRay(Ray ray, int recursiveIndex)
         {
             Hit hit = new Hit();
@@ -284,7 +289,27 @@ namespace RayTracer
 
             if (hit.Found)
             {
-                return hit.MaterialHit.Color; // se houver intersecção, retorna a cor do material constituinte do objecto intersectado mais próximo da origem do raio
+                //return hit.MaterialHit.Color; // se houver intersecção, retorna a cor do material constituinte do objecto intersectado mais próximo da origem do raio
+                
+                Color3 color = new Color3(0.0, 0.0, 0.0); // inicialização
+                foreach (LightSource light in sceneLights)
+                { // ciclo para percorrer todas as fontes de luz da cena
+                    // cálculo da componente de reflexão ambiente com origem na fonte de luz light
+                    color = color.add(light.Intensity.multiply(hit.MaterialHit.Color).multiplyScalar(hit.MaterialHit.AmbientLight));
+
+                    // cálculo da componente de reflexão difusa com origem na fonte de luz light
+                    // comecem por construir o vector l que une o ponto de intersecção ao ponto correspondente à posição da fonte de luz light
+                    Vector3 l = new Vector3(light.Position.Subtract(hit.IntersectionPoint));
+                    // normalizem o vector l
+                    l = l.Normalize();
+                    // calculem o co-seno do ângulo de incidência da luz. Este é igual ao produto escalar do vector normal pelo vector l(assumindo que ambos os vectores são unitários)
+                    double cosTheta = hit.NormalVector.DotProduct(l); // em que “∙” designa o produto escalar de vectores 3D
+                           // calculem a componente de reflexão difusa e adicionem a cor resultante à cor color.Tenham, no entanto, em consideração que só interessa calcular esta componente se o ângulo de incidência θ for inferior a 90.0° (por outras palavras, se cosTheta > 0.0).Um ângulo de incidência superior àquele valor significa que o raio luminoso está a incidir no lado de trás da superfície do objecto intersectado
+                    if (cosTheta > ε)
+                        color = color.add(light.Intensity.multiply(hit.MaterialHit.Color).multiplyScalar(hit.MaterialHit.DifuseLight).multiplyScalar(cosTheta));
+                }
+                return color.divideScalar(sceneLights.Count); // em que sceneLights.length designa o número de fontes de luz existentes na cena; se houver intersecção, retorna a cor correspondente à componente de luz ambiente reflectida pelo objecto intersectado mais próximo da origem do raio
+
             }
             else
             {
