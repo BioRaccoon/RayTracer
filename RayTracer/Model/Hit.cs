@@ -13,7 +13,7 @@ namespace RayTracer.Model
         public Vector3 IntersectionPoint { get; set; }
         public Vector3 NormalVector { get; set; }
         public double TotalDistance { get; set; }
-        public double FoundDistance { get; set; }
+        public double MinDistance { get; set; }
 
         public Hit(bool foundHit, Material materialHit, Vector3 intersectionPoint, Vector3 normal, double distance, double foundDistance) {
             Found = foundHit;
@@ -21,7 +21,7 @@ namespace RayTracer.Model
             IntersectionPoint = intersectionPoint;
             NormalVector = normal;
             TotalDistance = distance;
-            FoundDistance = foundDistance;
+            MinDistance = foundDistance;
         }
 
         public Hit()

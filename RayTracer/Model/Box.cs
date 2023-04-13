@@ -151,11 +151,9 @@ namespace RayTracer.Model
             Vector3 rayOriginToIntersection = hit.IntersectionPoint.Subtract(ray.Origin);
             hit.TotalDistance = rayOriginToIntersection.Length();
 
-            //hit.IntersectionPoint = intersectionPoint;
-
-            if (hit.TotalDistance < hit.FoundDistance)
+            if (hit.TotalDistance < hit.MinDistance)
             {
-                hit.FoundDistance = hit.TotalDistance;
+                hit.MinDistance = hit.TotalDistance;
             }
 
             return true;

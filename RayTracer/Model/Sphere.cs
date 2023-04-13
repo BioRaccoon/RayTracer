@@ -72,14 +72,13 @@ namespace RayTracer.Model
 
             if (hit.TotalDistance <= ε) { return false; }
 
-            if (hit.TotalDistance >= hit.FoundDistance) { return false; }
+            if (hit.TotalDistance >= hit.MinDistance) { return false; }
 
             hit.Found = true;
-            //if (hit.TotalDistance < hit.FoundDistance)
+            //if (hit.TotalDistance < hit.MinDistance)
             //{
-                hit.FoundDistance = hit.TotalDistance;
+                hit.MinDistance = hit.TotalDistance;
             //}
-            //hit.IntersectionPoint = intersectionPoint;
             hit.NormalVector = intersectionPoint.Subtract(sphereOrigin).Normalize();
             hit.NormalVector = StaticFunctions.ConvertObjectNormalToWorldCoordinates(hit.NormalVector, CompositeMatrix);
 

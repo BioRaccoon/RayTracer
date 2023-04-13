@@ -50,7 +50,7 @@ namespace RayTracer.Model
 
         public string toString()
         {
-            return Red+","+Green+","+Blue;
+            return Red + "," + Green + "," + Blue;
         }
 
         public Color3 multiply(Color3 colorToMultiplyBy)

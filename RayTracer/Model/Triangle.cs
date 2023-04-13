@@ -106,11 +106,10 @@ namespace RayTracer.Model
 
             if (hit.TotalDistance <= ε) { return false; } // hit.t > ε -> intersection in front of ray
 
-            if (hit.TotalDistance >= hit.FoundDistance) { return false; }// hit.t < hit.tmin -> closer intersection
+            if (hit.TotalDistance >= hit.MinDistance) { return false; }// hit.t < hit.tmin -> closer intersection
 
-            hit.FoundDistance = hit.TotalDistance;
+            hit.MinDistance = hit.TotalDistance;
             hit.Found = true;
-            //hit.IntersectionPoint = intersectionPoint;
             // N = (T-1)T N’
             hit.NormalVector = StaticFunctions.ConvertObjectNormalToWorldCoordinates(Normal, CompositeMatrix); 
             //hit.NormalVector = Normal;

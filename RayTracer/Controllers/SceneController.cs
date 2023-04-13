@@ -11,6 +11,7 @@ using System.Security.Policy;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 using Image = RayTracer.Model.Image;
 
 namespace RayTracer
@@ -271,7 +272,7 @@ namespace RayTracer
         {
             Hit hit = new Hit();
             hit.Found = false; // inicialização; também pode ser realizada no construtor da classe Hit
-            hit.FoundDistance = 1.0E12; // usem um valor muito elevado. Por exemplo, hit.tmin = 1.0E12;
+            hit.MinDistance = 1.0E12; // usem um valor muito elevado. Por exemplo, hit.tmin = 1.0E12;
             double hitMin = 1.0E12;
             foreach (Object3D object3 in sceneObjects)
             { // ciclo para percorrer todos os objectos da cena
@@ -279,9 +280,9 @@ namespace RayTracer
               //{
                 Ray rayCopy = new Ray(ray.Origin, ray.Direction);
                 object3.intersect(rayCopy, hit);
-                if (hit.FoundDistance < hitMin)
+                if (hit.MinDistance < hitMin)
                 {
-                    hitMin = hit.FoundDistance;
+                    hitMin = hit.MinDistance;
                     hit.MaterialHit = materials[object3.MaterialIndex];
                 }
               //}
@@ -300,13 +301,47 @@ namespace RayTracer
                     // cálculo da componente de reflexão difusa com origem na fonte de luz light
                     // comecem por construir o vector l que une o ponto de intersecção ao ponto correspondente à posição da fonte de luz light
                     Vector3 l = new Vector3(light.Position.Subtract(hit.IntersectionPoint));
+                    // antes de normalizar o vector l, calculem o seu comprimento
+                    double tLight = l.Length();
                     // normalizem o vector l
                     l = l.Normalize();
                     // calculem o co-seno do ângulo de incidência da luz. Este é igual ao produto escalar do vector normal pelo vector l(assumindo que ambos os vectores são unitários)
                     double cosTheta = hit.NormalVector.DotProduct(l); // em que “∙” designa o produto escalar de vectores 3D
-                           // calculem a componente de reflexão difusa e adicionem a cor resultante à cor color.Tenham, no entanto, em consideração que só interessa calcular esta componente se o ângulo de incidência θ for inferior a 90.0° (por outras palavras, se cosTheta > 0.0).Um ângulo de incidência superior àquele valor significa que o raio luminoso está a incidir no lado de trás da superfície do objecto intersectado
-                    if (cosTheta > ε)
-                        color = color.add(light.Intensity.multiply(hit.MaterialHit.Color).multiplyScalar(hit.MaterialHit.DifuseLight).multiplyScalar(cosTheta));
+                    // só interessa calcular a componente de reflexão difusa se o ângulo de incidência
+                    // θ for inferior a 90.0° (por outras palavras, se cosTheta > 0.0).Um ângulo de
+                    // incidência superior àquele valor significa que o raio luminoso está a incidir no lado
+                    // de trás da superfície do objecto intersectado
+                    if (cosTheta > 0.0)
+                    {
+                        // construam o raio de detecção de sombra que tem origem no ponto de intersecção e a direcção do vector l
+                        //Ray shadowRay = new Ray(hit.IntersectionPoint, l);
+                        Ray shadowRay = new Ray(hit.IntersectionPoint.Add(l.ScalarMultiplication(ε)), l); // shadowRay = new Ray(hit.point + ε * l, l);
+                        Hit shadowHit = new Hit();
+                        shadowHit.Found = false; // inicialização; também pode ser realizada no construtor da classe Hit
+                        shadowHit.MinDistance = tLight; // a intersecção, se existir, terá de ocorrer aquém da posição da fonte de luz
+                        foreach (Object3D sceneObject in sceneObjects)
+                        {
+                            sceneObject.intersect(shadowRay, shadowHit);
+
+                            // há sombra, pois o raio shadowRay intersecta um
+                            // (basta um) objecto da cena, a distância shadowHit.t do ponto de
+                            // intersecção à origem do raio é shadowHit.t > 0.0 (pois a intersecção terá
+                            // de ocorrer à frente da origem do raio) e shadowHit.t < shadowHit.tLight
+                            // (pois a intersecção terá de ocorrer aquém da posição da fonte de luz).
+                            // Mais precisamente, e para evitar o problema, já referido, que decorre de
+                            // a precisão de cálculo ser limitada, a intersecção só deverá ser reportada
+                            // quando a distância shadowHit.t do ponto de intersecção à origem do raio
+                            // for shadowHit.t > ε e não shadowHit.t > 0.0 (documento “TR - 05.pdf”, págs. 14 a 17)
+
+                            if (shadowHit.Found) break;
+                            // encontrada que está uma obstrução à passagem da luz proveniente da fonte light,
+                            // não há necessidade de percorrer os restantes objectos da cena
+
+                        }
+                        // atentem na negação “!” da condição; se o ponto estiver exposto à luz proveniente da fonte light,
+                        // calculem a componente de reflexão difusa e adicionem a cor resultante à cor color
+                        if (!shadowHit.Found) color = color.add(light.Intensity.multiply(hit.MaterialHit.Color).multiplyScalar(hit.MaterialHit.DifuseLight).multiplyScalar(cosTheta)).CheckRange();
+                    }
                 }
                 return color.divideScalar(sceneLights.Count); // em que sceneLights.length designa o número de fontes de luz existentes na cena; se houver intersecção, retorna a cor correspondente à componente de luz ambiente reflectida pelo objecto intersectado mais próximo da origem do raio
 
