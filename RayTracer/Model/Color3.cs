@@ -12,7 +12,6 @@ namespace RayTracer.Model
     internal class Color3
     {
         // O valor vermelho da cor.
-
         public double Red { get; set; }
 
         // O valor verde da cor.
@@ -33,7 +32,6 @@ namespace RayTracer.Model
             Green = green;
             Blue = blue;
         }
-
 
         public Color3 CheckRange()
         {

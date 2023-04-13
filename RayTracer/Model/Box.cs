@@ -138,7 +138,6 @@ namespace RayTracer.Model
             Vector3 intersectionPoint = ray.Direction.ScalarMultiplication(tNear).Add(ray.Origin);
 
             hit.TotalDistance = tNear;
-            hit.Found = true;
 
             intersectionPoint = StaticFunctions.ConvertPointToWorldCoordinates(intersectionPoint, CompositeMatrix);
             ray.Origin = StaticFunctions.ConvertPointToWorldCoordinates(ray.Origin, CompositeMatrix);
@@ -152,6 +151,7 @@ namespace RayTracer.Model
                 hit.MinDistance = hit.TotalDistance;
             }
 
+            hit.Found = true;
             hit.IntersectionPoint = intersectionPoint;
             hit.NormalVector = checkWhichBoxFaceWasHit(tNear, txmin, txmax, tymin, tymax, tzmin, tzmax);
             hit.NormalVector = StaticFunctions.ConvertObjectNormalToWorldCoordinates(hit.NormalVector, CompositeMatrix);

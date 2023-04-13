@@ -61,13 +61,15 @@ namespace RayTracer.Model
             Vector3 intersectionPoint = ray.Direction.ScalarMultiplication(hit.TotalDistance).Add(ray.Origin);
             hit.IntersectionPoint = intersectionPoint;
 
+            hit.NormalVector = intersectionPoint.Subtract(sphereOrigin).Normalize();
+
             hit.IntersectionPoint = StaticFunctions.ConvertPointToWorldCoordinates(intersectionPoint, CompositeMatrix);
             ray.Origin = StaticFunctions.ConvertPointToWorldCoordinates(ray.Origin, CompositeMatrix);
             ray.Direction = StaticFunctions.ConvertVectorToWorldCoordinates(ray.Direction, CompositeMatrix);
 
             // calcular a distância hit.distance (hit.t)
             // do ponto de interseção à origem do raio
-            Vector3 originIntersection = intersectionPoint.Subtract(ray.Origin);
+            Vector3 originIntersection = hit.IntersectionPoint.Subtract(ray.Origin);
             hit.TotalDistance = originIntersection.Length();
 
             if (hit.TotalDistance <= ε) { return false; }
@@ -79,7 +81,6 @@ namespace RayTracer.Model
             //{
                 hit.MinDistance = hit.TotalDistance;
             //}
-            hit.NormalVector = intersectionPoint.Subtract(sphereOrigin).Normalize();
             hit.NormalVector = StaticFunctions.ConvertObjectNormalToWorldCoordinates(hit.NormalVector, CompositeMatrix);
 
             return true;
