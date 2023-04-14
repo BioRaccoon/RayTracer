@@ -9,7 +9,7 @@ namespace RayTracer.Utils
 {
     internal class StaticFunctions
     {
-        public static Vector3 ConvertPointToWorldCoordinates(Vector3 vectorCartesian, double[,] CompositeMatrix)
+        /*public static Vector3 ConvertPointToWorldCoordinates(Vector3 vectorCartesian, double[,] CompositeMatrix)
         {
             Vector4 vectorHomogeneous = vectorCartesian.ConvertPointToHomogenous();
 
@@ -88,7 +88,7 @@ namespace RayTracer.Utils
             vectorCartesian = vectorHomogeneous.ConvertVectorToCartesian();
 
             return vectorCartesian.Normalize();
-        }
+        }*/
 
     }
 }

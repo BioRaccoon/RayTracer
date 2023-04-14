@@ -53,9 +53,16 @@ namespace RayTracer.Model
         override
         public bool intersect(Ray ray, Hit hit)
         {
+            //hit.Found = false;
+            //return false;
 
-            ray.Origin = StaticFunctions.ConvertPointToObjectCoordinates(ray.Origin, CompositeMatrix);
-            ray.Direction = StaticFunctions.ConvertVectorToObjectCoordinates(ray.Direction, CompositeMatrix);
+            Vector3 tempVector = new Vector3(0, 0, 0);
+
+
+            Ray rayCopy = new Ray(ray.Origin, ray.Direction);
+
+            rayCopy.Origin = tempVector.ConvertPointToObjectCoordinates(rayCopy.Origin, CompositeMatrix);
+            rayCopy.Direction = tempVector.ConvertVectorToObjectCoordinates(rayCopy.Direction, CompositeMatrix);
 
             Vector3 boxMin = firstVextex;
             Vector3 boxMax = secondVextex;
@@ -65,10 +72,10 @@ namespace RayTracer.Model
 
             /////////////////////// X axis ///////////////////////
 
-            if (!checkIfRayIsParallel(ray.Origin.XValue, ray.Direction.XValue, boxMin.XValue, boxMax.XValue)) return false;
+            if (!checkIfRayIsParallel(rayCopy.Origin.XValue, rayCopy.Direction.XValue, boxMin.XValue, boxMax.XValue)) return false;
 
-            double txmin = calculateIntersectionDistance(boxMin.XValue, ray.Origin.XValue, ray.Direction.XValue);
-            double txmax = calculateIntersectionDistance(boxMax.XValue, ray.Origin.XValue, ray.Direction.XValue);
+            double txmin = calculateIntersectionDistance(boxMin.XValue, rayCopy.Origin.XValue, rayCopy.Direction.XValue);
+            double txmax = calculateIntersectionDistance(boxMax.XValue, rayCopy.Origin.XValue, rayCopy.Direction.XValue);
 
             if (txmin > txmax) // If tx1 > tx2, swap
             {
@@ -87,10 +94,10 @@ namespace RayTracer.Model
 
             /////////////////////// Y axis ///////////////////////
 
-            if (!checkIfRayIsParallel(ray.Origin.YValue, ray.Direction.YValue, boxMin.YValue, boxMax.YValue)) return false;
+            if (!checkIfRayIsParallel(rayCopy.Origin.YValue, rayCopy.Direction.YValue, boxMin.YValue, boxMax.YValue)) return false;
 
-            double tymin = calculateIntersectionDistance(boxMin.YValue, ray.Origin.YValue, ray.Direction.YValue);
-            double tymax = calculateIntersectionDistance(boxMax.YValue, ray.Origin.YValue, ray.Direction.YValue);
+            double tymin = calculateIntersectionDistance(boxMin.YValue, rayCopy.Origin.YValue, rayCopy.Direction.YValue);
+            double tymax = calculateIntersectionDistance(boxMax.YValue, rayCopy.Origin.YValue, rayCopy.Direction.YValue);
 
             if (tymin > tymax) // If ty1 > ty2, swap
             {
@@ -111,10 +118,10 @@ namespace RayTracer.Model
 
             /////////////////////// Z axis ///////////////////////
 
-            if (!checkIfRayIsParallel(ray.Origin.ZValue, ray.Direction.ZValue, boxMin.ZValue, boxMax.ZValue)) return false;
+            if (!checkIfRayIsParallel(rayCopy.Origin.ZValue, rayCopy.Direction.ZValue, boxMin.ZValue, boxMax.ZValue)) return false;
 
-            double tzmin = calculateIntersectionDistance(boxMin.ZValue, ray.Origin.ZValue, ray.Direction.ZValue);
-            double tzmax = calculateIntersectionDistance(boxMax.ZValue, ray.Origin.ZValue, ray.Direction.ZValue);
+            double tzmin = calculateIntersectionDistance(boxMin.ZValue, rayCopy.Origin.ZValue, rayCopy.Direction.ZValue);
+            double tzmax = calculateIntersectionDistance(boxMax.ZValue, rayCopy.Origin.ZValue, rayCopy.Direction.ZValue);
 
             if (tzmin > tzmax) // If tz1 > tz2, swap
             {
@@ -135,15 +142,13 @@ namespace RayTracer.Model
 
             // calculate intersection point
             // P(t) = R + tNear * D
-            Vector3 intersectionPoint = ray.Direction.ScalarMultiplication(tNear).Add(ray.Origin);
+            Vector3 intersectionPoint = rayCopy.Direction.ScalarMultiplication(tNear).Add(rayCopy.Origin);
 
             hit.TotalDistance = tNear;
 
             hit.NormalVector = checkWhichBoxFaceWasHit(intersectionPoint, tNear, txmin, txmax, tymin, tymax, tzmin, tzmax);
 
-            intersectionPoint = StaticFunctions.ConvertPointToWorldCoordinates(intersectionPoint, CompositeMatrix);
-            ray.Origin = StaticFunctions.ConvertPointToWorldCoordinates(ray.Origin, CompositeMatrix);
-            ray.Direction = StaticFunctions.ConvertVectorToWorldCoordinates(ray.Direction, CompositeMatrix);
+            intersectionPoint = tempVector.ConvertPointToWorldCoordinates(intersectionPoint, CompositeMatrix);
 
             Vector3 rayOriginToIntersection = intersectionPoint.Subtract(ray.Origin);
             hit.TotalDistance = rayOriginToIntersection.Length();
@@ -155,7 +160,7 @@ namespace RayTracer.Model
 
             hit.Found = true;
             hit.IntersectionPoint = intersectionPoint;
-            hit.NormalVector = StaticFunctions.ConvertObjectNormalToWorldCoordinates(hit.NormalVector, CompositeMatrix);
+            hit.NormalVector = tempVector.ConvertObjectNormalToWorldCoordinates(hit.NormalVector, CompositeMatrix);
 
             return true;
         }

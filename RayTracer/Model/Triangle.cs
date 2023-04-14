@@ -43,24 +43,28 @@ namespace RayTracer.Model
         override
         public bool intersect(Ray ray, Hit hit)
         {
-            double α; // 0 < α < 1
+            //double α; // 0 < α < 1
             double β; // 0 < β < 1
             double γ; // 0 < γ < 1;
 
-            ray.Origin = StaticFunctions.ConvertPointToObjectCoordinates(ray.Origin, CompositeMatrix);
-            ray.Direction = StaticFunctions.ConvertVectorToObjectCoordinates(ray.Direction, CompositeMatrix);
+            Vector3 temp = new Vector3(0,0,0);
+
+            Ray rayCopy = new Ray(ray.Origin, ray.Direction);
+
+            rayCopy.Origin = temp.ConvertPointToObjectCoordinates(rayCopy.Origin, CompositeMatrix);
+            rayCopy.Direction = temp.ConvertVectorToObjectCoordinates(rayCopy.Direction, CompositeMatrix);
 
             // α + β + γ = 1
 
             double[,] A = new double[3, 3]
-            { { FirstVertex.XValue - SecondVertex.XValue, FirstVertex.XValue - ThirdVertex.XValue, ray.Direction.XValue},
-              { FirstVertex.YValue - SecondVertex.YValue, FirstVertex.YValue - ThirdVertex.YValue, ray.Direction.YValue},
-              { FirstVertex.ZValue - SecondVertex.ZValue, FirstVertex.ZValue - ThirdVertex.ZValue, ray.Direction.ZValue}};
+            { { FirstVertex.XValue - SecondVertex.XValue, FirstVertex.XValue - ThirdVertex.XValue, rayCopy.Direction.XValue},
+              { FirstVertex.YValue - SecondVertex.YValue, FirstVertex.YValue - ThirdVertex.YValue, rayCopy.Direction.YValue},
+              { FirstVertex.ZValue - SecondVertex.ZValue, FirstVertex.ZValue - ThirdVertex.ZValue, rayCopy.Direction.ZValue}};
 
             double[,] matrixToCalcBeta = new double[3, 3]
-            { {FirstVertex.XValue - ray.Origin.XValue, FirstVertex.XValue - ThirdVertex.XValue, ray.Direction.XValue},
-              {FirstVertex.YValue - ray.Origin.YValue, FirstVertex.YValue - ThirdVertex.YValue, ray.Direction.YValue},
-              {FirstVertex.ZValue - ray.Origin.ZValue, FirstVertex.ZValue - ThirdVertex.ZValue, ray.Direction.ZValue}};
+            { {FirstVertex.XValue - rayCopy.Origin.XValue, FirstVertex.XValue - ThirdVertex.XValue, rayCopy.Direction.XValue},
+              {FirstVertex.YValue - rayCopy.Origin.YValue, FirstVertex.YValue - ThirdVertex.YValue, rayCopy.Direction.YValue},
+              {FirstVertex.ZValue - rayCopy.Origin.ZValue, FirstVertex.ZValue - ThirdVertex.ZValue, rayCopy.Direction.ZValue}};
 
             β = matrixDeterminant(matrixToCalcBeta) / matrixDeterminant(A);
 
@@ -69,9 +73,9 @@ namespace RayTracer.Model
             if (β <= -ε) { return false; } // β > -ε -> intersection
 
             double[,] matrixToCalcGamma = new double[3, 3]
-            { {FirstVertex.XValue - SecondVertex.XValue, FirstVertex.XValue - ray.Origin.XValue, ray.Direction.XValue},
-              {FirstVertex.YValue - SecondVertex.YValue, FirstVertex.YValue - ray.Origin.YValue, ray.Direction.YValue},
-              {FirstVertex.ZValue - SecondVertex.ZValue, FirstVertex.ZValue - ray.Origin.ZValue, ray.Direction.ZValue}};
+            { {FirstVertex.XValue - SecondVertex.XValue, FirstVertex.XValue - rayCopy.Origin.XValue, rayCopy.Direction.XValue},
+              {FirstVertex.YValue - SecondVertex.YValue, FirstVertex.YValue - rayCopy.Origin.YValue, rayCopy.Direction.YValue},
+              {FirstVertex.ZValue - SecondVertex.ZValue, FirstVertex.ZValue - rayCopy.Origin.ZValue, rayCopy.Direction.ZValue}};
 
             γ = matrixDeterminant(matrixToCalcGamma) / matrixDeterminant(A);
 
@@ -91,9 +95,9 @@ namespace RayTracer.Model
                 (ThirdVertex.Subtract(FirstVertex).ScalarMultiplication(γ));
 
             // P = T P’
-            intersectionPoint = StaticFunctions.ConvertPointToWorldCoordinates(intersectionPoint, CompositeMatrix);
-            ray.Origin = StaticFunctions.ConvertPointToWorldCoordinates(ray.Origin, CompositeMatrix);
-            ray.Direction = StaticFunctions.ConvertVectorToWorldCoordinates(ray.Direction, CompositeMatrix);
+            intersectionPoint = temp.ConvertPointToWorldCoordinates(intersectionPoint, CompositeMatrix);
+            //ray.Origin = StaticFunctions.ConvertPointToWorldCoordinates(ray.Origin, CompositeMatrix);
+            //ray.Direction = StaticFunctions.ConvertVectorToWorldCoordinates(ray.Direction, CompositeMatrix);
 
             Vector3 rayOriginToIntersection = intersectionPoint.Subtract(ray.Origin);
             hit.TotalDistance = rayOriginToIntersection.Length();
@@ -106,7 +110,7 @@ namespace RayTracer.Model
             hit.Found = true;
             hit.IntersectionPoint = intersectionPoint;
             // N = (T-1)T N’
-            hit.NormalVector = StaticFunctions.ConvertObjectNormalToWorldCoordinates(Normal, CompositeMatrix); 
+            hit.NormalVector = temp.ConvertObjectNormalToWorldCoordinates(Normal, CompositeMatrix); 
             //hit.NormalVector = Normal;
 
             return true;
