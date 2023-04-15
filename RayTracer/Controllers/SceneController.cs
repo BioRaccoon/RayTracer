@@ -345,6 +345,27 @@ namespace RayTracer
                         //}
                     }
                 }
+
+                // antes de calcularem recursivamente a componente de reflexão especular, confirmem que a profundidade máxima de recursividade rec do traçador de raios ainda não foi atingida
+                if (recursiveIndex > 0)
+                {
+                    // comecem por calcular o co-seno do ângulo do raio incidente
+                    double cosThetaV = -(ray.Direction.DotProduct(hit.NormalVector));
+                    if (hit.MaterialHit.SpecularLight > 0.0)
+                    { // o material constituinte do objecto intersectado reflecte a luz especular
+                        // calculem a direcção do raio reflectido
+                        Vector3 r = new Vector3(ray.Direction.Add(hit.NormalVector.ScalarMultiplication(2.0 * cosThetaV)));
+                        // normalizem o vector
+                        r.Normalize();
+                        // construam o raio reflectido que tem origem no ponto de intersecção e a direcção do vector r
+                        Ray reflectedRay = new Ray(hit.IntersectionPoint, r);
+                        // uma vez construído o raio, deverão invocar a função traceRay(), a qual irá acompanhar recursivamente o percurso do referido raio; quando regressar, a cor retornada por esta função deverá ser usada para calcular a componente de reflexão especular, a qual será adicionada à cor color
+                        color = color.add(hit.MaterialHit.Color.multiplyScalar(hit.MaterialHit.SpecularLight).multiply(traceRay(reflectedRay, recursiveIndex - 1)));
+
+                    }
+
+                }
+
                 return color.divideScalar(sceneLights.Count).CheckRange(); // em que sceneLights.length designa o número de fontes de luz existentes na cena; se houver intersecção, retorna a cor correspondente à componente de luz ambiente reflectida pelo objecto intersectado mais próximo da origem do raio
 
             }
