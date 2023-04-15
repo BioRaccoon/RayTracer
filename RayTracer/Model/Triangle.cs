@@ -47,12 +47,10 @@ namespace RayTracer.Model
             double β; // 0 < β < 1
             double γ; // 0 < γ < 1;
 
-            Vector3 temp = new Vector3(0,0,0);
-
             Ray rayCopy = new Ray(ray.Origin, ray.Direction);
 
-            rayCopy.Origin = temp.ConvertPointToObjectCoordinates(rayCopy.Origin, CompositeMatrix);
-            rayCopy.Direction = temp.ConvertVectorToObjectCoordinates(rayCopy.Direction, CompositeMatrix);
+            rayCopy.Origin = StaticFunctions.ConvertPointToObjectCoordinates(rayCopy.Origin, CompositeMatrix);
+            rayCopy.Direction = StaticFunctions.ConvertVectorToObjectCoordinates(rayCopy.Direction, CompositeMatrix);
 
             // α + β + γ = 1
 
@@ -95,7 +93,7 @@ namespace RayTracer.Model
                 (ThirdVertex.Subtract(FirstVertex).ScalarMultiplication(γ));
 
             // P = T P’
-            intersectionPoint = temp.ConvertPointToWorldCoordinates(intersectionPoint, CompositeMatrix);
+            intersectionPoint = StaticFunctions.ConvertPointToWorldCoordinates(intersectionPoint, CompositeMatrix);
             //ray.Origin = StaticFunctions.ConvertPointToWorldCoordinates(ray.Origin, CompositeMatrix);
             //ray.Direction = StaticFunctions.ConvertVectorToWorldCoordinates(ray.Direction, CompositeMatrix);
 
@@ -110,7 +108,7 @@ namespace RayTracer.Model
             hit.Found = true;
             hit.IntersectionPoint = intersectionPoint;
             // N = (T-1)T N’
-            hit.NormalVector = temp.ConvertObjectNormalToWorldCoordinates(Normal, CompositeMatrix); 
+            hit.NormalVector = StaticFunctions.ConvertObjectNormalToWorldCoordinates(Normal, CompositeMatrix); 
             //hit.NormalVector = Normal;
 
             return true;

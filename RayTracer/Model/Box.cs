@@ -56,13 +56,10 @@ namespace RayTracer.Model
             //hit.Found = false;
             //return false;
 
-            Vector3 tempVector = new Vector3(0, 0, 0);
-
-
             Ray rayCopy = new Ray(ray.Origin, ray.Direction);
 
-            rayCopy.Origin = tempVector.ConvertPointToObjectCoordinates(rayCopy.Origin, CompositeMatrix);
-            rayCopy.Direction = tempVector.ConvertVectorToObjectCoordinates(rayCopy.Direction, CompositeMatrix);
+            rayCopy.Origin = StaticFunctions.ConvertPointToObjectCoordinates(rayCopy.Origin, CompositeMatrix);
+            rayCopy.Direction = StaticFunctions.ConvertVectorToObjectCoordinates(rayCopy.Direction, CompositeMatrix);
 
             Vector3 boxMin = firstVextex;
             Vector3 boxMax = secondVextex;
@@ -148,7 +145,7 @@ namespace RayTracer.Model
 
             hit.NormalVector = checkWhichBoxFaceWasHit(intersectionPoint, tNear, txmin, txmax, tymin, tymax, tzmin, tzmax);
 
-            intersectionPoint = tempVector.ConvertPointToWorldCoordinates(intersectionPoint, CompositeMatrix);
+            intersectionPoint = StaticFunctions.ConvertPointToWorldCoordinates(intersectionPoint, CompositeMatrix);
 
             Vector3 rayOriginToIntersection = intersectionPoint.Subtract(ray.Origin);
             hit.TotalDistance = rayOriginToIntersection.Length();
@@ -160,7 +157,7 @@ namespace RayTracer.Model
 
             hit.Found = true;
             hit.IntersectionPoint = intersectionPoint;
-            hit.NormalVector = tempVector.ConvertObjectNormalToWorldCoordinates(hit.NormalVector, CompositeMatrix);
+            hit.NormalVector = StaticFunctions.ConvertObjectNormalToWorldCoordinates(hit.NormalVector, CompositeMatrix);
 
             return true;
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RayTracer.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,7 +20,7 @@ namespace RayTracer.Model
 
             Transformation transformation = transformations[TransformationIndex];
 
-            CompositeMatrix = transformation.TransformationMatrix;
+            CompositeMatrix = Transformation.IdentityMatrix();
 
             if (transformation.types.Count() > 0)
             {
@@ -29,24 +30,38 @@ namespace RayTracer.Model
                     switch (type[0])
                     {
                         case "T":
-                            CompositeMatrix = transformation.Translate(double.Parse(type[1]), double.Parse(type[2]), double.Parse(type[3]));
-                            transformation.TransformationMatrix = CompositeMatrix;
+                            CompositeMatrix = Transformation.Translate(
+                                StaticFunctions.parseDouble(type[1]), 
+                                StaticFunctions.parseDouble(type[2]),
+                                StaticFunctions.parseDouble(type[3]), 
+                                CompositeMatrix);
+                            //Transformation.TransformationMatrix = CompositeMatrix;
                             break;
                         case "S":
-                            CompositeMatrix = transformation.Scale(double.Parse(type[1]), double.Parse(type[2]), double.Parse(type[3]));
-                            transformation.TransformationMatrix = CompositeMatrix;
+                            CompositeMatrix = Transformation.Scale(
+                                StaticFunctions.parseDouble(type[1]), 
+                                StaticFunctions.parseDouble(type[2]), 
+                                StaticFunctions.parseDouble(type[3]),
+                                CompositeMatrix);
+                            //Transformation.TransformationMatrix = CompositeMatrix;
                             break;
                         case "Rx":
-                            CompositeMatrix = transformation.RotateX(double.Parse(type[1]));
-                            transformation.TransformationMatrix = CompositeMatrix;
+                            CompositeMatrix = Transformation.RotateX(
+                                StaticFunctions.parseDouble(type[1]),
+                                CompositeMatrix);
+                            //Transformation.TransformationMatrix = CompositeMatrix;
                             break;
                         case "Ry":
-                            CompositeMatrix = transformation.RotateY(double.Parse(type[1]));
-                            transformation.TransformationMatrix = CompositeMatrix;
+                            CompositeMatrix = Transformation.RotateY(
+                                StaticFunctions.parseDouble(type[1]),
+                                CompositeMatrix);
+                            //Transformation.TransformationMatrix = CompositeMatrix;
                             break;
                         case "Rz":
-                            CompositeMatrix = transformation.RotateZ(double.Parse(type[1]));
-                            transformation.TransformationMatrix = CompositeMatrix;
+                            CompositeMatrix = Transformation.RotateZ(
+                                StaticFunctions.parseDouble(type[1]),
+                                CompositeMatrix);
+                            //Transformation.TransformationMatrix = CompositeMatrix;
                             break;
                         default:
                             break;
@@ -54,11 +69,7 @@ namespace RayTracer.Model
                 }
             }
 
-            Transformation trans = transformations[camera.TransformationIndex];
-
-            Transformation copy = new Transformation(trans.TransformationMatrix);
-
-            CompositeMatrix = copy.MultiplyWithMatrix(CompositeMatrix);
+            CompositeMatrix = Transformation.MultiplyWithMatrix(camera.CompositeMatrix, CompositeMatrix);
 
         }
 

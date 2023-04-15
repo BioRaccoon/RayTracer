@@ -277,7 +277,6 @@ namespace RayTracer
             { // ciclo para percorrer todos os objectos da cena
               //if (object3 is Sphere || object3 is Triangle)
               //{
-                //Ray rayCopy = new Ray(ray.Origin, ray.Direction);
                 if(object3.intersect(ray, hit))
                 {
                     hit.MaterialHit = materials[object3.MaterialIndex];
@@ -308,13 +307,6 @@ namespace RayTracer
                     // de trás da superfície do objecto intersectado
                     if (cosTheta > 0.0)
                     {
-                        /*// construam o raio de detecção de sombra que tem origem no ponto de intersecção e a direcção do vector l
-                        Ray shadowRay = new Ray(hit.IntersectionPoint, l);
-                        Ray shadowRayCopy = new Ray(shadowRay.Origin, shadowRay.Direction);
-                        //Ray shadowRay = new Ray(hit.IntersectionPoint.Add(l.ScalarMultiplication(ε)), l); // shadowRay = new Ray(hit.point + ε * l, l);
-                        Hit shadowHit = new Hit();
-                        shadowHit.Found = false; // inicialização; também pode ser realizada no construtor da classe Hit
-                        shadowHit.MinDistance = tLight; // a intersecção, se existir, terá de ocorrer aquém da posição da fonte de luz*/
                         Ray shadowRay = new Ray(hit.IntersectionPoint, l);
                         //Ray shadowRay = new Ray(hit.IntersectionPoint.Add(l.ScalarMultiplication(ε)), l); // shadowRay = new Ray(hit.point + ε * l, l);
                         Hit shadowHit = new Hit();
@@ -346,63 +338,6 @@ namespace RayTracer
                     }
                 }
                 return color.divideScalar(sceneLights.Count).CheckRange(); // em que sceneLights.length designa o número de fontes de luz existentes na cena; se houver intersecção, retorna a cor correspondente à componente de luz ambiente reflectida pelo objecto intersectado mais próximo da origem do raio
-
-            }
-            else
-            {
-                return image.BackgroundColor; // caso contrário, retorna a cor de fundo
-            }
-        }
-
-       
-
-        Color3 traceRays(Ray ray, int recursiveIndex)
-        {
-            Hit hit = new Hit();
-            hit.Found = false; // inicialização; também pode ser realizada no construtor da classe Hit
-            hit.MinDistance = 1.0E12; // usem um valor muito elevado. Por exemplo, hit.tmin = 1.0E12;
-            double hitMin = 1.0E12;
-            foreach (Object3D object3 in sceneObjects)
-            { // ciclo para percorrer todos os objectos da cena
-              //if (object3 is Sphere || object3 is Triangle)
-              //{
-                Ray rayCopy = new Ray(ray.Origin, ray.Direction);
-                object3.intersect(rayCopy, hit);
-                if (hit.MinDistance < hitMin)
-                {
-                    hitMin = hit.MinDistance;
-                    hit.MaterialHit = materials[object3.MaterialIndex];
-                }
-                //}
-            }
-
-            if (hit.Found)
-            {
-                //return hit.MaterialHit.Color; // se houver intersecção, retorna a cor do material constituinte do objecto intersectado mais próximo da origem do raio
-
-                Color3 color = new Color3(0.0, 0.0, 0.0); // inicialização
-                foreach (LightSource light in sceneLights)
-                { // ciclo para percorrer todas as fontes de luz da cena
-                    // cálculo da componente de reflexão ambiente com origem na fonte de luz light
-                    color = color.add(light.Intensity.multiply(hit.MaterialHit.Color).multiplyScalar(hit.MaterialHit.AmbientLight)).CheckRange();
-
-                    // cálculo da componente de reflexão difusa com origem na fonte de luz light
-                    // comecem por construir o vector l que une o ponto de intersecção ao ponto correspondente à posição da fonte de luz light
-                    Vector3 l = new Vector3(light.Position.Subtract(hit.IntersectionPoint));
-                    // normalizem o vector l
-                    l = l.Normalize();
-                    // calculem o co-seno do ângulo de incidência da luz. Este é igual ao produto escalar do vector normal pelo vector l(assumindo que ambos os vectores são unitários)
-                    double cosTheta = hit.NormalVector.DotProduct(l); // em que “∙” designa o produto escalar de vectores 3D
-                    // só interessa calcular a componente de reflexão difusa se o ângulo de incidência
-                    // θ for inferior a 90.0° (por outras palavras, se cosTheta > 0.0).Um ângulo de
-                    // incidência superior àquele valor significa que o raio luminoso está a incidir no lado
-                    // de trás da superfície do objecto intersectado
-                    if (cosTheta > 0.0)
-                    {
-                        color = color.add(light.Intensity.multiply(hit.MaterialHit.Color).multiplyScalar(hit.MaterialHit.DifuseLight).multiplyScalar(cosTheta)).CheckRange();
-                    }
-                }
-                return color.divideScalar(sceneLights.Count); // em que sceneLights.length designa o número de fontes de luz existentes na cena; se houver intersecção, retorna a cor correspondente à componente de luz ambiente reflectida pelo objecto intersectado mais próximo da origem do raio
 
             }
             else

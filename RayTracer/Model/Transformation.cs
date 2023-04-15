@@ -15,36 +15,38 @@ namespace RayTracer.Model
         public Transformation(List<string> types)
         {
             this.types = types;
-            IdentityMatrix();
+            TransformationMatrix = IdentityMatrix();
         }
 
         public Transformation(double[,] transformationMatrix) {
             TransformationMatrix = transformationMatrix;
         }
 
-        public void IdentityMatrix()
+        public static double[,] IdentityMatrix()
         {
-            TransformationMatrix = new double[4, 4];
+            double[,] identityMatrix = new double[4, 4];
 
-            TransformationMatrix[0, 0] = 1.0;
-            TransformationMatrix[0, 1] = 0.0;
-            TransformationMatrix[0, 2] = 0.0;
-            TransformationMatrix[0, 3] = 0.0;
-            TransformationMatrix[1, 0] = 0.0;
-            TransformationMatrix[1, 1] = 1.0;
-            TransformationMatrix[1, 2] = 0.0;
-            TransformationMatrix[1, 3] = 0.0;
-            TransformationMatrix[2, 0] = 0.0;
-            TransformationMatrix[2, 1] = 0.0;
-            TransformationMatrix[2, 2] = 1.0;
-            TransformationMatrix[2, 3] = 0.0;
-            TransformationMatrix[3, 0] = 0.0;
-            TransformationMatrix[3, 1] = 0.0;
-            TransformationMatrix[3, 2] = 0.0;
-            TransformationMatrix[3, 3] = 1.0;
+            identityMatrix[0, 0] = 1.0;
+            identityMatrix[0, 1] = 0.0;
+            identityMatrix[0, 2] = 0.0;
+            identityMatrix[0, 3] = 0.0;
+            identityMatrix[1, 0] = 0.0;
+            identityMatrix[1, 1] = 1.0;
+            identityMatrix[1, 2] = 0.0;
+            identityMatrix[1, 3] = 0.0;
+            identityMatrix[2, 0] = 0.0;
+            identityMatrix[2, 1] = 0.0;
+            identityMatrix[2, 2] = 1.0;
+            identityMatrix[2, 3] = 0.0;
+            identityMatrix[3, 0] = 0.0;
+            identityMatrix[3, 1] = 0.0;
+            identityMatrix[3, 2] = 0.0;
+            identityMatrix[3, 3] = 1.0;
+
+            return identityMatrix;
         }
 
-        public double[] MultiplyWithPoint(Vector4 pointA, Vector4 pointB) 
+        /*public double[] MultiplyWithPoint(Vector4 pointA, Vector4 pointB) 
         {
 
             double[] pointAMatrix = pointA.ConvertToMatrix();
@@ -64,9 +66,26 @@ namespace RayTracer.Model
                 }
             }
             return pointBMatrix;
+        }*/
+
+        public static double[] MultiplyWithPoint(double[,] matrix, Vector4 pointA)
+        {
+
+            double[] pointAMatrix = pointA.ConvertToMatrix();
+            double[] pointBMatrix = {0.0, 0.0, 0.0, 0.0};
+
+            int i, j;
+            for (i = 0; i < 4; i++)
+            {
+                for (j = 0; j < 4; j++)
+                {
+                    pointBMatrix[i] += matrix[i, j] * pointAMatrix[j];
+                }
+            }
+            return pointBMatrix;
         }
 
-        public double[,] MultiplyWithMatrix(double[,] matrixA) // multiplica duas matrizes 4 x 4
+        /*public double[,] MultiplyWithMatrix(double[,] matrixA) // multiplica duas matrizes 4 x 4
         {
             if (matrixA.GetLength(1) != 4) throw new Exception("The array length must be 4.");
 
@@ -93,11 +112,35 @@ namespace RayTracer.Model
                 }
             }
             return result;
+        }*/
 
+        public static double[,] MultiplyWithMatrix(double[,] matrix1, double[,] matrix2)
+        {
+            // Verificar as dimensões das matrizes
+            if (matrix1.GetLength(1) != matrix2.GetLength(0))
+            {
+                throw new ArgumentException("O número de colunas da primeira matriz deve ser igual ao número de linhas da segunda matriz.");
+            }
+
+            // Criar uma matriz para armazenar o resultado
+            double[,] result = new double[4, 4];
+
+            // Realizar a multiplicação das matrizes
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    for (int k = 0; k < 4; k++)
+                    {
+                        result[i, j] += matrix1[i, k] * matrix2[k, j];
+                    }
+                }
+            }
+
+            return result;
         }
 
-
-        public double[,] Translate(double x, double y, double z)
+        public static double[,] Translate(double x, double y, double z, double[,] matrix)
         {
             double[,] result = new double[4,4];
 
@@ -118,10 +161,10 @@ namespace RayTracer.Model
             result[3,2] = 0.0;
             result[3,3] = 1.0;
 
-            return MultiplyWithMatrix(result);
+            return MultiplyWithMatrix(matrix, result);
         }
 
-        public double[,] TransposeMatrix(double[,] matrix)
+        public static double[,] TransposeMatrix(double[,] matrix)
         {
             int rows = matrix.GetLength(0);
             int columns = matrix.GetLength(1);
@@ -138,7 +181,7 @@ namespace RayTracer.Model
             return result;
         }
 
-        public double[,] RotateX(double a) 
+        public static double[,] RotateX(double a, double[,] matrix) 
         {
             double [,] rotateXMatrix = new double[4,4];
 
@@ -160,11 +203,11 @@ namespace RayTracer.Model
             rotateXMatrix[3, 2] = 0.0;
             rotateXMatrix[3, 3] = 1.0;
 
-            return MultiplyWithMatrix(rotateXMatrix);
+            return MultiplyWithMatrix(matrix, rotateXMatrix);
         }
 
 
-        public double [,] RotateY(double a) // cria a matriz correspondente à rotação em torno do eixo Y e multiplica a matriz de transformação composta pela matriz recém-criada
+        public static double[,] RotateY(double a, double[,] matrix) // cria a matriz correspondente à rotação em torno do eixo Y e multiplica a matriz de transformação composta pela matriz recém-criada
         {
             double[,] rotateYMatrix = new double[4, 4];
 
@@ -185,10 +228,10 @@ namespace RayTracer.Model
             rotateYMatrix[3,1] = 0.0;
             rotateYMatrix[3,2] = 0.0;
             rotateYMatrix[3,3] = 1.0;
-            return MultiplyWithMatrix(rotateYMatrix);
+            return MultiplyWithMatrix(matrix, rotateYMatrix);
         }
 
-        public double[,] RotateZ(double a) // cria a matriz correspondente à rotação em torno do eixo Y e multiplica a matriz de transformação composta pela matriz recém-criada
+        public static double[,] RotateZ(double a, double[,] matrix) // cria a matriz correspondente à rotação em torno do eixo Y e multiplica a matriz de transformação composta pela matriz recém-criada
         {
             double[,] rotateZMatrix = new double[4, 4];
 
@@ -209,10 +252,10 @@ namespace RayTracer.Model
             rotateZMatrix[3, 1] = 0.0;
             rotateZMatrix[3, 2] = 0.0;
             rotateZMatrix[3, 3] = 1.0;
-            return MultiplyWithMatrix(rotateZMatrix);
+            return MultiplyWithMatrix(matrix, rotateZMatrix);
         }
 
-        public double[,] Scale(double x, double y, double z)
+        public static double[,] Scale(double x, double y, double z, double[,] matrix)
         {
             double [,] scaleMatrix = new double [4,4];
 
@@ -232,11 +275,11 @@ namespace RayTracer.Model
             scaleMatrix[3,1] = 0.0;
             scaleMatrix[3,2] = 0.0;
             scaleMatrix[3,3] = 1.0;
-            return MultiplyWithMatrix(scaleMatrix);
+            return MultiplyWithMatrix(matrix, scaleMatrix);
         }
 
         // Using Gaussian elimination method
-        public double[,] InvertMatrix(double[,] matrix)
+        public static double[,] InvertMatrix(double[,] matrix)
         {
             // Check if matrix is square
             int n = matrix.GetLength(0);
