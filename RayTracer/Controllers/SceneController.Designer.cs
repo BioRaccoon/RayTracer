@@ -52,11 +52,12 @@
             this.refractionCheckBox = new System.Windows.Forms.CheckBox();
             this.specularReflectionCheckBox = new System.Windows.Forms.CheckBox();
             this.difuseReflectionCheckBox = new System.Windows.Forms.CheckBox();
-            this.ambientReflectionCheckBox = new System.Windows.Forms.CheckBox();
+            this.ambientLightCheckBox = new System.Windows.Forms.CheckBox();
             this.backgroundCtrlsBox = new System.Windows.Forms.GroupBox();
             this.backgroundColorBtn = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.lblProgress = new System.Windows.Forms.Label();
+            this.shadowsCheckBox = new System.Windows.Forms.CheckBox();
             this.rayTracerBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.rayTracerPictBox)).BeginInit();
             this.sceneCtrlsBox.SuspendLayout();
@@ -87,6 +88,7 @@
             this.rayTracerPictBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.rayTracerPictBox.TabIndex = 0;
             this.rayTracerPictBox.TabStop = false;
+            this.rayTracerPictBox.Paint += new System.Windows.Forms.PaintEventHandler(this.rayTracerPictBox_Paint);
             // 
             // sceneCtrlsBox
             // 
@@ -304,16 +306,17 @@
             // 
             // lightEffectsCtrlsBox
             // 
+            this.lightEffectsCtrlsBox.Controls.Add(this.shadowsCheckBox);
             this.lightEffectsCtrlsBox.Controls.Add(this.refractionCheckBox);
             this.lightEffectsCtrlsBox.Controls.Add(this.specularReflectionCheckBox);
             this.lightEffectsCtrlsBox.Controls.Add(this.difuseReflectionCheckBox);
-            this.lightEffectsCtrlsBox.Controls.Add(this.ambientReflectionCheckBox);
+            this.lightEffectsCtrlsBox.Controls.Add(this.ambientLightCheckBox);
             this.lightEffectsCtrlsBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lightEffectsCtrlsBox.Location = new System.Drawing.Point(449, 532);
             this.lightEffectsCtrlsBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.lightEffectsCtrlsBox.Name = "lightEffectsCtrlsBox";
             this.lightEffectsCtrlsBox.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.lightEffectsCtrlsBox.Size = new System.Drawing.Size(227, 160);
+            this.lightEffectsCtrlsBox.Size = new System.Drawing.Size(227, 198);
             this.lightEffectsCtrlsBox.TabIndex = 7;
             this.lightEffectsCtrlsBox.TabStop = false;
             this.lightEffectsCtrlsBox.Text = "Light Effects";
@@ -322,7 +325,7 @@
             // 
             this.refractionCheckBox.AutoSize = true;
             this.refractionCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
-            this.refractionCheckBox.Location = new System.Drawing.Point(27, 123);
+            this.refractionCheckBox.Location = new System.Drawing.Point(27, 158);
             this.refractionCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.refractionCheckBox.Name = "refractionCheckBox";
             this.refractionCheckBox.Size = new System.Drawing.Size(108, 24);
@@ -334,7 +337,7 @@
             // 
             this.specularReflectionCheckBox.AutoSize = true;
             this.specularReflectionCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
-            this.specularReflectionCheckBox.Location = new System.Drawing.Point(27, 92);
+            this.specularReflectionCheckBox.Location = new System.Drawing.Point(27, 126);
             this.specularReflectionCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.specularReflectionCheckBox.Name = "specularReflectionCheckBox";
             this.specularReflectionCheckBox.Size = new System.Drawing.Size(177, 24);
@@ -354,17 +357,17 @@
             this.difuseReflectionCheckBox.Text = "Difuse Reflection";
             this.difuseReflectionCheckBox.UseVisualStyleBackColor = true;
             // 
-            // ambientReflectionCheckBox
+            // ambientLightCheckBox
             // 
-            this.ambientReflectionCheckBox.AutoSize = true;
-            this.ambientReflectionCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
-            this.ambientReflectionCheckBox.Location = new System.Drawing.Point(27, 31);
-            this.ambientReflectionCheckBox.Margin = new System.Windows.Forms.Padding(4);
-            this.ambientReflectionCheckBox.Name = "ambientReflectionCheckBox";
-            this.ambientReflectionCheckBox.Size = new System.Drawing.Size(172, 24);
-            this.ambientReflectionCheckBox.TabIndex = 0;
-            this.ambientReflectionCheckBox.Text = "Ambient Reflection";
-            this.ambientReflectionCheckBox.UseVisualStyleBackColor = true;
+            this.ambientLightCheckBox.AutoSize = true;
+            this.ambientLightCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
+            this.ambientLightCheckBox.Location = new System.Drawing.Point(27, 30);
+            this.ambientLightCheckBox.Margin = new System.Windows.Forms.Padding(4);
+            this.ambientLightCheckBox.Name = "ambientLightCheckBox";
+            this.ambientLightCheckBox.Size = new System.Drawing.Size(134, 24);
+            this.ambientLightCheckBox.TabIndex = 0;
+            this.ambientLightCheckBox.Text = "Ambient Light";
+            this.ambientLightCheckBox.UseVisualStyleBackColor = true;
             // 
             // backgroundCtrlsBox
             // 
@@ -407,6 +410,18 @@
             this.lblProgress.TabIndex = 10;
             this.lblProgress.Text = "Waiting for renderer...";
             this.lblProgress.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // shadowsCheckBox
+            // 
+            this.shadowsCheckBox.AutoSize = true;
+            this.shadowsCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
+            this.shadowsCheckBox.Location = new System.Drawing.Point(27, 94);
+            this.shadowsCheckBox.Margin = new System.Windows.Forms.Padding(4);
+            this.shadowsCheckBox.Name = "shadowsCheckBox";
+            this.shadowsCheckBox.Size = new System.Drawing.Size(99, 24);
+            this.shadowsCheckBox.TabIndex = 10;
+            this.shadowsCheckBox.Text = "Shadows";
+            this.shadowsCheckBox.UseVisualStyleBackColor = true;
             // 
             // RayTracerForm
             // 
@@ -466,7 +481,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button saveImageBtn;
         private System.Windows.Forms.GroupBox lightEffectsCtrlsBox;
-        private System.Windows.Forms.CheckBox ambientReflectionCheckBox;
+        private System.Windows.Forms.CheckBox ambientLightCheckBox;
         private System.Windows.Forms.CheckBox difuseReflectionCheckBox;
         private System.Windows.Forms.CheckBox specularReflectionCheckBox;
         private System.Windows.Forms.CheckBox refractionCheckBox;
@@ -475,6 +490,7 @@
         private System.Windows.Forms.PictureBox rayTracerPictBox;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label lblProgress;
+        private System.Windows.Forms.CheckBox shadowsCheckBox;
     }
 }
 

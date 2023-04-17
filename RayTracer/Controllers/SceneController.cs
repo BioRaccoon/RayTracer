@@ -80,6 +80,7 @@ namespace RayTracer
         {
             if (fileLoaded)
             {
+                rayTracerPictBox.Image = null;
                 primaryRaysGeneration();
             }
         }
@@ -182,22 +183,38 @@ namespace RayTracer
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
+            //int numThreads = Environment.ProcessorCount;
+            int numSamples = 4;
+
             for (int i = 0; i < Vres; i++) // cicle to go through all image lines
             {
                 for(int j = 0; j < Hres; j++) // cicle to go through all columns (pixels) of line i
                 {
-                    //P.x, P.y and P.z coordinates of the pixel center[i][j]
-                    double Px = (j + 0.5) * pixelSideSize - width / 2.0;
-                    double Py = -(i + 0.5) * pixelSideSize + height / 2.0;
-                    double Pz = 0.0;
+                    Color3 color = new Color3(0, 0, 0);
+                    for (int k = 0; k < numSamples; k++) // Loop para realizar amostragem superdimensionada
+                    {
+                        double offsetX = (k % 2 - 0.5) * pixelSideSize / 2.0;
+                        double offsetY = ((k / 2) % 2 - 0.5) * pixelSideSize / 2.0;
+                        //P.x, P.y and P.z coordinates of the pixel center[i][j]
+                        double Px = (j + 0.5) * pixelSideSize - width / 2.0 + offsetX;
+                        double Py = -(i + 0.5) * pixelSideSize + height / 2.0 + offsetY;
+                        //double Pz = 0.0;
 
-                    Vector3 direction = new Vector3 (Px , Py, -camera.Distance); // or new Vector3 (Px - 0.0 , Py - 0.0, Pz - camera.Distance);
+                        Vector3 direction = new Vector3(Px, Py, -camera.Distance); // or new Vector3 (Px - 0.0 , Py - 0.0, Pz - camera.Distance);
 
-                    direction = direction.Normalize();
+                        direction = direction.Normalize();
 
-                    Ray ray = new Ray(origin, direction);
+                        Ray ray = new Ray(origin, direction);
 
-                    Color3 color = traceRay(ray, int.Parse(recursiveIndex.Text));
+                        //color = traceRay(ray, int.Parse(recursiveIndex.Text));
+                        Color3 sampleColor = traceRay(ray, int.Parse(recursiveIndex.Text));
+
+                        color = color.add(sampleColor);
+
+                    }
+
+                    // Divide a cor acumulada pelo número de amostras para obter a cor média
+                    color = color.divideScalar(numSamples);
 
                     // Limitation of the primary components (R, G and B) of the colors obtained
 
@@ -266,7 +283,7 @@ namespace RayTracer
 
         }
 
-        double ε = 1E-6;
+        double ε = 1.0E-3;
 
         Color3 traceRay(Ray ray, int recursiveIndex)
         {
@@ -286,11 +303,12 @@ namespace RayTracer
             if (hit.Found)
             {
                 Color3 color = new Color3(0.0, 0.0, 0.0); // inicialização
+                //double cosTheta = 0.0;
                 foreach (LightSource light in sceneLights)
                 { // ciclo para percorrer todas as fontes de luz da cena
                     // cálculo da componente de reflexão ambiente com origem na fonte de luz light
                     // color = color + light.color * hit.material.color * hit.material.ambientCoefficient
-                    color = color.add(light.Intensity.multiply(hit.MaterialHit.Color).multiplyScalar(hit.MaterialHit.AmbientLight));
+                    if (ambientLightCheckBox.Checked) color = color.add(light.Intensity.multiply(hit.MaterialHit.Color).multiplyScalar(hit.MaterialHit.AmbientLight));
                     // cálculo da componente de reflexão difusa com origem na fonte de luz light
                     // comecem por construir o vector l que une o ponto de intersecção ao ponto correspondente à posição da fonte de luz light
                     Vector3 l = new Vector3(light.Position.Subtract(hit.IntersectionPoint));
@@ -300,15 +318,17 @@ namespace RayTracer
                     // normalizem o vector l
                     l = l.Normalize();
                     // calculem o co-seno do ângulo de incidência da luz. Este é igual ao produto escalar do vector normal pelo vector l(assumindo que ambos os vectores são unitários)
-                    double cosTheta = hit.NormalVector.DotProduct(l); // em que “∙” designa o produto escalar de vectores 3D
+                    //double cosTheta = hit.NormalVector.DotProduct(l); // em que “∙” designa o produto escalar de vectores 3D
+                    double cosTheta = hit.NormalVector.DotProduct(l);
                     // só interessa calcular a componente de reflexão difusa se o ângulo de incidência
                     // θ for inferior a 90.0° (por outras palavras, se cosTheta > 0.0).Um ângulo de
                     // incidência superior àquele valor significa que o raio luminoso está a incidir no lado
                     // de trás da superfície do objecto intersectado
                     if (cosTheta > 0.0)
                     {
-                        Ray shadowRay = new Ray(hit.IntersectionPoint, l);
-                        //Ray shadowRay = new Ray(hit.IntersectionPoint.Add(l.ScalarMultiplication(ε)), l); // shadowRay = new Ray(hit.point + ε * l, l);
+                        //Ray shadowRay = new Ray(hit.IntersectionPoint, l);
+                        // shadowRay = new Ray(hit.point + ε * hit.normal, l);
+                        Ray shadowRay = new Ray(hit.IntersectionPoint.Add(hit.NormalVector.ScalarMultiplication(ε)), l); // shadowRay = new Ray(hit.point + ε * l, l);
                         Hit shadowHit = new Hit();
                         foreach (Object3D sceneObject in sceneObjects)
                         {
@@ -330,35 +350,86 @@ namespace RayTracer
                         }
                         // atentem na negação “!” da condição; se o ponto estiver exposto à luz proveniente da fonte light,
                         // calculem a componente de reflexão difusa e adicionem a cor resultante à cor color
-                        //if (!shadowHit.Found)
-                        //{
+                        if (!shadowHit.Found && shadowsCheckBox.Checked)
+                        {
                             // color = color + light.color * hit.material.color * hit.material.diffuseCoefficient * cosTheta;
                             color = color.add(light.Intensity.multiply(hit.MaterialHit.Color).multiplyScalar(hit.MaterialHit.DifuseLight).multiplyScalar(cosTheta));
-                        //}
+                        }
+                        if(difuseReflectionCheckBox.Checked) color = color.add(light.Intensity.multiply(hit.MaterialHit.Color).multiplyScalar(hit.MaterialHit.DifuseLight).multiplyScalar(cosTheta));
                     }
                 }
 
                 // antes de calcularem recursivamente a componente de reflexão especular, confirmem que a profundidade máxima de recursividade rec do traçador de raios ainda não foi atingida
-                if (recursiveIndex > 0)
+                if (recursiveIndex > 0 && specularReflectionCheckBox.Checked)
                 {
                     // comecem por calcular o co-seno do ângulo do raio incidente
                     double cosThetaV = -(ray.Direction.DotProduct(hit.NormalVector));
                     if (hit.MaterialHit.SpecularLight > 0.0)
                     { // o material constituinte do objecto intersectado reflecte a luz especular
                         // calculem a direcção do raio reflectido
-                        Vector3 r = new Vector3(ray.Direction.Add(hit.NormalVector.ScalarMultiplication(2.0 * cosThetaV)));
+                        Vector3 r = new Vector3(
+                                        ray.Direction.Add(
+                                            hit.NormalVector.ScalarMultiplication(
+                                                2.0 * cosThetaV
+                                               )
+                                            )
+                                        );
                         // normalizem o vector
-                        r.Normalize();
+                        r = r.Normalize();
                         // construam o raio reflectido que tem origem no ponto de intersecção e a direcção do vector r
                         Ray reflectedRay = new Ray(hit.IntersectionPoint, r);
-                        // uma vez construído o raio, deverão invocar a função traceRay(), a qual irá acompanhar recursivamente o percurso do referido raio; quando regressar, a cor retornada por esta função deverá ser usada para calcular a componente de reflexão especular, a qual será adicionada à cor color
-                        color = color.add(hit.MaterialHit.Color.multiplyScalar(hit.MaterialHit.SpecularLight).multiply(traceRay(reflectedRay, recursiveIndex - 1)));
+                        Ray rayCopy = new Ray(reflectedRay.Origin, reflectedRay.Direction);
 
+                        // uma vez construído o raio, deverão invocar a função traceRay(), a qual irá acompanhar recursivamente o percurso do referido raio; quando regressar, a cor retornada por esta função deverá ser usada para calcular a componente de reflexão especular, a qual será adicionada à cor color
+                        color = color.add(
+                            hit.MaterialHit.Color.multiplyScalar(
+                                hit.MaterialHit.SpecularLight)
+                            .multiply(
+                                traceRay(rayCopy, recursiveIndex - 1)
+                                )
+                            );
+                        /*color = color.add(
+                            hit.MaterialHit.Color.multiplyScalar(
+                                hit.MaterialHit.SpecularLight + 
+                                (1.0 - hit.MaterialHit.SpecularLight) * 
+                                ((1.0 - cosTheta) * (1.0 - cosTheta) * (1.0 - cosTheta)* (1.0 - cosTheta) * (1.0 - cosTheta))).
+                                multiply(traceRay(rayCopy, recursiveIndex - 1)));*/
+                    }
+
+                    if (hit.MaterialHit.Refraction > 0.0 && refractionCheckBox.Checked)
+                    { 
+                        // o material constituinte do objecto intersectado refracta a luz para calcular a razão entre os índices
+                        // de refracção e o co-seno do ângulo do raio refractado, comecem por admitir que o raio luminoso está a transitar do
+                        // ar para o meio constituinte do objecto intersectado
+                        double eta = 1.0 / hit.MaterialHit.RefractionIndex;
+                        double cosThetaR = Math.Sqrt(1.0 - eta * eta * (1.0 - cosThetaV * cosThetaV));
+                        // se o raio luminoso estiver a transitar do meio constituinte do objecto intersectado para o ar, invertam a razão
+                        // entre os índices de refracção e troquem o sinal do co - seno do ângulo do raio refractado
+                         if (cosThetaV < 0.0)
+                        {
+                            eta = hit.MaterialHit.RefractionIndex;
+                            cosThetaR = -cosThetaR;
+                        }
+                        // calculem a direcção do raio refractado
+                        Vector3 r = new Vector3(ray.Direction.ScalarMultiplication(eta).
+                            Add(hit.NormalVector.ScalarMultiplication(eta * cosThetaV - cosThetaR)));
+                        // normalizem o vector
+                        r = r.Normalize();
+                        // construam o raio refractado que tem origem no ponto de intersecção e a direcção do vector r
+                        Ray refractedRay = new Ray(hit.IntersectionPoint, r);
+                        // uma vez construído o raio, deverão invocar a função traceRay(), a qual irá acompanhar recursivamente o percurso do referido
+                        // raio; quando regressar, a cor retornada por esta função deverá ser usada para calcular a componente de refracção, a qual será
+                        // adicionada à cor color
+                        color = color.add(hit.MaterialHit.Color.
+                            multiplyScalar(hit.MaterialHit.RefractionIndex).
+                            multiply(traceRay(refractedRay, recursiveIndex - 1)));
                     }
 
                 }
 
-                return color.divideScalar(sceneLights.Count).CheckRange(); // em que sceneLights.length designa o número de fontes de luz existentes na cena; se houver intersecção, retorna a cor correspondente à componente de luz ambiente reflectida pelo objecto intersectado mais próximo da origem do raio
+                if (!ambientLightCheckBox.Checked && !difuseReflectionCheckBox.Checked && !shadowsCheckBox.Checked && !specularReflectionCheckBox.Checked && !refractionCheckBox.Checked) return hit.MaterialHit.Color;
+
+                return color.divideScalar(sceneLights.Count); // em que sceneLights.length designa o número de fontes de luz existentes na cena; se houver intersecção, retorna a cor correspondente à componente de luz ambiente reflectida pelo objecto intersectado mais próximo da origem do raio
 
             }
             else
@@ -406,6 +477,11 @@ namespace RayTracer
 
                 fs.Close();
             }
+        }
+
+        private void rayTracerPictBox_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
         }
     }
 }

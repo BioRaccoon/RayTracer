@@ -48,8 +48,6 @@ namespace RayTracer.Model
         
         }
 
-        double ε = 1E-6;
-
         override
         public bool intersect(Ray ray, Hit hit)
         {
@@ -143,12 +141,16 @@ namespace RayTracer.Model
 
             hit.TotalDistance = tNear;
 
-            hit.NormalVector = checkWhichBoxFaceWasHit(intersectionPoint, tNear, txmin, txmax, tymin, tymax, tzmin, tzmax);
+            hit.NormalVector = checkWhichBoxFaceWasHit(intersectionPoint);
 
             intersectionPoint = StaticFunctions.ConvertPointToWorldCoordinates(intersectionPoint, CompositeMatrix);
 
             Vector3 rayOriginToIntersection = intersectionPoint.Subtract(ray.Origin);
             hit.TotalDistance = rayOriginToIntersection.Length();
+
+            if (hit.TotalDistance <= ε) { return false; }
+
+            if (hit.TotalDistance >= hit.MinDistance) { return false; }
 
             if (hit.TotalDistance < hit.MinDistance)
             {
@@ -162,45 +164,41 @@ namespace RayTracer.Model
             return true;
         }
 
-        /*public static double calculateMagnitude(Vector3 vector)
-        {
-            return Math.Sqrt(vector.XValue * vector.XValue + vector.YValue * vector.YValue + vector.ZValue * vector.ZValue);
-        }*/
-
-        public Vector3 checkWhichBoxFaceWasHit(Vector3 intersectionPoint, double tNear, double txmin, double txmax, double tymin, double tymax, double tzmin, double tzmax)
+        public Vector3 checkWhichBoxFaceWasHit(Vector3 intersectionPoint)
         {
 
             // Check which face was hit
-            if (Math.Abs(intersectionPoint.XValue + 0.5)<1.0E-3)
+            if (Math.Abs(intersectionPoint.XValue + 0.5) < ε)
             {
                 // Front face was hit
                 return new Vector3(-1, 0, 0);
             }
-            else if (Math.Abs(intersectionPoint.XValue - 0.5) < 1.0E-3)
+            else if (Math.Abs(intersectionPoint.XValue - 0.5) < ε)
             {
                 // Back face was hit
                 return new Vector3(1, 0, 0);
             }
-            else if (Math.Abs(intersectionPoint.YValue + 0.5) < 1.0E-3)
+            else if (Math.Abs(intersectionPoint.YValue + 0.5) < ε)
             {
                 // Bottom face was hit
                 return new Vector3(0, -1, 0);
             }
-            else if (Math.Abs(intersectionPoint.YValue - 0.5) < 1.0E-3)
+            else if (Math.Abs(intersectionPoint.YValue - 0.5) < ε)
             {
                 // Top face was hit
                 return new Vector3(0, 1, 0);
             }
-            else if (Math.Abs(intersectionPoint.ZValue + 0.5) < 1.0E-3)
+            else if (Math.Abs(intersectionPoint.ZValue + 0.5) < ε)
             {
                 // Left face was hit
                 return new Vector3(0, 0, -1);
             }
-            else if (Math.Abs(intersectionPoint.ZValue - 0.5) < 1.0E-3)
+            else if (Math.Abs(intersectionPoint.ZValue - 0.5) < ε)
             {
                 // Right face was hit
                 return new Vector3(0, 0, 1);
             }
+
 
             return null;
         }

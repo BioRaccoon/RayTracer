@@ -13,6 +13,8 @@ namespace RayTracer.Model
         public int MaterialIndex { get; set; }
         public double[,] CompositeMatrix { get; set; }
 
+        public double ε = 1.0E-4;
+
         public abstract bool intersect(Ray ray, Hit hit);
 
         public void GeometricTransformations(List<Transformation> transformations, Camera camera)

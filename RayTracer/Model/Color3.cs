@@ -63,13 +63,13 @@ namespace RayTracer.Model
 
         public Color3 add(Color3 colorToAdd)
         {
-            return new Color3(Red + colorToAdd.Red, Green + colorToAdd.Green, Blue + colorToAdd.Blue).CheckRange();
+            return new Color3(Red + colorToAdd.Red, Green + colorToAdd.Green, Blue + colorToAdd.Blue);
         }
 
         public Color3 divideScalar(int scalar)
         {
             if (scalar == 0) return this;
-            return new Color3(Red / scalar, Green / scalar, Blue / scalar).CheckRange();
+            return new Color3(Red / scalar, Green / scalar, Blue / scalar);
         }
     }
 }

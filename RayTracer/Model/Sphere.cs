@@ -20,8 +20,6 @@ namespace RayTracer.Model
             this.MaterialIndex = MaterialIndex;
         }
 
-        double ε = 1E-3;
-
         override
         public bool intersect(Ray ray, Hit hit)
         {
@@ -43,20 +41,14 @@ namespace RayTracer.Model
 
             d = Math.Sqrt(d);
 
-            //double t;
-            double tPlus = (-b + d) / (2 * a);
-            double tMinus = (-b - d) / (2 * a);
+            double t1 = (-b + d) / (2 * a);
+            double t2 = (-b - d) / (2 * a);
 
-            /*if (tMinus < 0.0)
+            if (t2 > t1)
             {
-                t = tPlus;
-            } else { t = tMinus; }*/
-
-            if (tMinus > tPlus)
-            {
-                hit.TotalDistance = tPlus;
+                hit.TotalDistance = t1;
             }
-            else hit.TotalDistance = tMinus;
+            else hit.TotalDistance = t2;
 
             Vector3 intersectionPoint = rayCopy.Direction.ScalarMultiplication(hit.TotalDistance).Add(rayCopy.Origin);
 
@@ -69,23 +61,21 @@ namespace RayTracer.Model
             Vector3 originIntersection = intersectionPoint.Subtract(ray.Origin);
             hit.TotalDistance = originIntersection.Length();
 
-            if (hit.TotalDistance <= ε) { return false; }
+            /*if (hit.TotalDistance <= ε) { return false; }
 
-            if (hit.TotalDistance >= hit.MinDistance) { return false; }
+            if (hit.TotalDistance >= hit.MinDistance) { return false; }*/
 
-            hit.Found = true;
-            hit.MinDistance = hit.TotalDistance;
-            hit.IntersectionPoint = intersectionPoint;
-            hit.NormalVector = StaticFunctions.ConvertObjectNormalToWorldCoordinates(normal, CompositeMatrix);
+            if (hit.TotalDistance > ε || hit.TotalDistance < hit.MinDistance)
+            {
+                hit.Found = true;
+                hit.MinDistance = hit.TotalDistance;
+                hit.IntersectionPoint = intersectionPoint;
+                hit.NormalVector = StaticFunctions.ConvertObjectNormalToWorldCoordinates(normal, CompositeMatrix);
+                return true;
+            }
 
-            return true;
+            return false;
         }
-
-        //vector norm
-        /*public static double calculateMagnitude(Vector3 vector)
-        {
-            return Math.Sqrt(vector.XValue * vector.XValue + vector.YValue * vector.YValue + vector.ZValue * vector.ZValue);
-        }*/
 
         public double Distance(Vector3 point1, Vector3 point2)
         {
