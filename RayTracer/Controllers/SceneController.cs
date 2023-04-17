@@ -60,6 +60,7 @@ namespace RayTracer
                 fileLoaded = true;
                 startRenderBtn.Enabled = true;
                 backgroundColorBtn.Enabled = true;
+                backgroundColorLabel.BackColor = Color.FromArgb(Convert.ToInt32(255.0 * image.BackgroundColor.Red), Convert.ToInt32(255.0 * image.BackgroundColor.Green), Convert.ToInt32(255.0 * image.BackgroundColor.Blue));
             }
         }
 
@@ -184,17 +185,23 @@ namespace RayTracer
             stopwatch.Start();
 
             //int numThreads = Environment.ProcessorCount;
-            int numSamples = 4;
+            int numSamples = Convert.ToInt32(numSamplesWheel.Value);
 
             for (int i = 0; i < Vres; i++) // cicle to go through all image lines
             {
                 for(int j = 0; j < Hres; j++) // cicle to go through all columns (pixels) of line i
                 {
                     Color3 color = new Color3(0, 0, 0);
+                    if (!antiAliasingCheckBox.Checked) numSamples = 1;
+                    if (antiAliasingCheckBox.Checked && numSamples == 0) numSamples = 1;
                     for (int k = 0; k < numSamples; k++) // Loop para realizar amostragem superdimensionada
                     {
                         double offsetX = (k % 2 - 0.5) * pixelSideSize / 2.0;
                         double offsetY = ((k / 2) % 2 - 0.5) * pixelSideSize / 2.0;
+                        if (!antiAliasingCheckBox.Checked) {
+                            offsetX = 0;
+                            offsetY = 0;
+                        }
                         //P.x, P.y and P.z coordinates of the pixel center[i][j]
                         double Px = (j + 0.5) * pixelSideSize - width / 2.0 + offsetX;
                         double Py = -(i + 0.5) * pixelSideSize + height / 2.0 + offsetY;
@@ -210,7 +217,6 @@ namespace RayTracer
                         Color3 sampleColor = traceRay(ray, int.Parse(recursiveIndex.Text));
 
                         color = color.add(sampleColor);
-
                     }
 
                     // Divide a cor acumulada pelo número de amostras para obter a cor média
@@ -482,6 +488,18 @@ namespace RayTracer
         private void rayTracerPictBox_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+        }
+
+        private void backgroundColorBtn_Click(object sender, EventArgs e)
+        {
+            ColorDialog color = new ColorDialog();
+            color.SolidColorOnly = true;
+            //color.FullOpen = true;
+            if (color.ShowDialog() == DialogResult.OK)
+            {
+                image.BackgroundColor = new Color3(color.Color.R / 255.0, color.Color.G / 255.0, color.Color.B / 255.0);
+                backgroundColorLabel.BackColor = color.Color;
+            }
         }
     }
 }
