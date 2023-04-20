@@ -332,34 +332,37 @@ namespace RayTracer
                     // de trás da superfície do objecto intersectado
                     if (cosTheta > 0.0)
                     {
-                        //Ray shadowRay = new Ray(hit.IntersectionPoint, l);
-                        // shadowRay = new Ray(hit.point + ε * hit.normal, l);
-                        Ray shadowRay = new Ray(hit.IntersectionPoint.Add(hit.NormalVector.ScalarMultiplication(ε)), l); // shadowRay = new Ray(hit.point + ε * l, l);
-                        Hit shadowHit = new Hit();
-                        foreach (Object3D sceneObject in sceneObjects)
+                        if (shadowsCheckBox.Checked)
                         {
-                            shadowHit.Found = false; // inicialização; também pode ser realizada no construtor da classe Hit
-                            shadowHit.MinDistance = tLight; // a intersecção, se existir, terá de ocorrer aquém da posição da fonte de luz
-                            sceneObject.intersect(shadowRay, shadowHit);
-                            // há sombra, pois o raio shadowRay intersecta um
-                            // (basta um) objecto da cena, a distância shadowHit.t do ponto de
-                            // intersecção à origem do raio é shadowHit.t > 0.0 (pois a intersecção terá
-                            // de ocorrer à frente da origem do raio) e shadowHit.t < shadowHit.tLight
-                            // (pois a intersecção terá de ocorrer aquém da posição da fonte de luz).
-                            // Mais precisamente, e para evitar o problema, já referido, que decorre de
-                            // a precisão de cálculo ser limitada, a intersecção só deverá ser reportada
-                            // quando a distância shadowHit.t do ponto de intersecção à origem do raio
-                            // for shadowHit.t > ε e não shadowHit.t > 0.0 (documento “TR - 05.pdf”, págs. 14 a 17)
-                            if (shadowHit.Found) break;
-                            // encontrada que está uma obstrução à passagem da luz proveniente da fonte light,
-                            // não há necessidade de percorrer os restantes objectos da cena
-                        }
-                        // atentem na negação “!” da condição; se o ponto estiver exposto à luz proveniente da fonte light,
-                        // calculem a componente de reflexão difusa e adicionem a cor resultante à cor color
-                        if (!shadowHit.Found && shadowsCheckBox.Checked)
-                        {
-                            // color = color + light.color * hit.material.color * hit.material.diffuseCoefficient * cosTheta;
-                            color = color.add(light.Intensity.multiply(hit.MaterialHit.Color).multiplyScalar(hit.MaterialHit.DifuseLight).multiplyScalar(cosTheta));
+                            //Ray shadowRay = new Ray(hit.IntersectionPoint, l);
+                            // shadowRay = new Ray(hit.point + ε * hit.normal, l);
+                            Ray shadowRay = new Ray(hit.IntersectionPoint.Add(hit.NormalVector.ScalarMultiplication(ε)), l); // shadowRay = new Ray(hit.point + ε * l, l);
+                            Hit shadowHit = new Hit();
+                            foreach (Object3D sceneObject in sceneObjects)
+                            {
+                                shadowHit.Found = false; // inicialização; também pode ser realizada no construtor da classe Hit
+                                shadowHit.MinDistance = tLight; // a intersecção, se existir, terá de ocorrer aquém da posição da fonte de luz
+                                sceneObject.intersect(shadowRay, shadowHit);
+                                // há sombra, pois o raio shadowRay intersecta um
+                                // (basta um) objecto da cena, a distância shadowHit.t do ponto de
+                                // intersecção à origem do raio é shadowHit.t > 0.0 (pois a intersecção terá
+                                // de ocorrer à frente da origem do raio) e shadowHit.t < shadowHit.tLight
+                                // (pois a intersecção terá de ocorrer aquém da posição da fonte de luz).
+                                // Mais precisamente, e para evitar o problema, já referido, que decorre de
+                                // a precisão de cálculo ser limitada, a intersecção só deverá ser reportada
+                                // quando a distância shadowHit.t do ponto de intersecção à origem do raio
+                                // for shadowHit.t > ε e não shadowHit.t > 0.0 (documento “TR - 05.pdf”, págs. 14 a 17)
+                                if (shadowHit.Found) break;
+                                // encontrada que está uma obstrução à passagem da luz proveniente da fonte light,
+                                // não há necessidade de percorrer os restantes objectos da cena
+                            }
+                            // atentem na negação “!” da condição; se o ponto estiver exposto à luz proveniente da fonte light,
+                            // calculem a componente de reflexão difusa e adicionem a cor resultante à cor color
+                            if (!shadowHit.Found)
+                            {
+                                // color = color + light.color * hit.material.color * hit.material.diffuseCoefficient * cosTheta;
+                                color = color.add(light.Intensity.multiply(hit.MaterialHit.Color).multiplyScalar(hit.MaterialHit.DifuseLight).multiplyScalar(cosTheta));
+                            }
                         }
                         if(difuseReflectionCheckBox.Checked) color = color.add(light.Intensity.multiply(hit.MaterialHit.Color).multiplyScalar(hit.MaterialHit.DifuseLight).multiplyScalar(cosTheta));
                     }
@@ -449,7 +452,7 @@ namespace RayTracer
             // Displays a SaveFileDialog so the user can save the Image
             // assigned to Button2.
             SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "JPEG Image|*.jpg|PNG Image|*.png|Bitmap Image|*.bmp|";
+            saveFileDialog.Filter = "JPEG Image|*.jpg|PNG Image|*.png|Bitmap Image|*.bmp";
             saveFileDialog.Title = "Save an Image File";
             saveFileDialog.ShowDialog();
 
